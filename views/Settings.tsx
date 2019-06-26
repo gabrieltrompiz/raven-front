@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, Text } from 'react-native'
+import AppHeader from '../components/AppHeader';
 
 const Settings: React.FC = () => {
   return (
     <View>
-      <Text>Settings</Text>
+      <AppHeader title='Settings' color='#fff'/>
     </View>
   );
 }

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { AppLoading } from 'expo'
+import * as Font from 'expo-font'
 import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer } from 'react-navigation'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Chats from './views/Chats';
@@ -8,6 +10,15 @@ import Settings from './views/Settings';
 import Camera from './views/Camera';
 
 const App: React.FC = () => {
+  const [isReady, setReady] = useState(false)
+
+   const _startAsync = () => {
+      return Font.loadAsync({
+        'Lato Black': require('../react-app/assets/Lato-Black.ttf'),
+        'Lato': require('../react-app/assets/Lato-Regular.ttf')
+      })
+  }
+
   const ChatsStack: NavigationContainer = createStackNavigator({
      Chats: Chats
   }, { headerMode: 'none' });
@@ -50,6 +61,16 @@ const App: React.FC = () => {
     })
   })
   const AppContainer: NavigationContainer = createAppContainer(TabNav)
+
+  if(!isReady) {
+    return (
+      <AppLoading 
+        startAsync={_startAsync}
+        onError={console.warn}
+        onFinish={() => setReady(true)}
+      />
+    );
+  }
   return (
     <AppContainer style={{ backgroundColor: 'transparent' }} />
   );
