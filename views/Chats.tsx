@@ -1,28 +1,30 @@
 import React, { useRef, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from 'react-native'
 import AppHeader from '../components/AppHeader';
 import { SearchBar } from 'react-native-elements';
 
 const Chats: React.FC = () => {
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
-  const [roundDelta, setDelta] = useState(1) // state for controlling border radius delta
+  const [roundDelta, setRoundDelta] = useState(1) // state for controlling border radius delta
+  const [opacityDelta, setOpacityDelta] = useState(1)
 
   const ref = useRef(null) // ScrollView ref
 
-  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if(event.nativeEvent.contentOffset.y >= 0) {
-      setDelta(((-1/58) * event.nativeEvent.contentOffset.y) + 1) // linear function to generate border radius delta
-    }
-    if(Math.trunc(event.nativeEvent.contentOffset.y) >= 63 && !scrolled) {
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => { // linear functions generate a coefficient from 0 to 1 according to scrolled distance
+    const roundDelta = ((-1/55) * event.nativeEvent.contentOffset.y) + 1 > 0 ? ((-1/55) * event.nativeEvent.contentOffset.y) + 1 : 0 // linear function to set border roundness
+    const opacityDelta = ((-1/20) * event.nativeEvent.contentOffset.y) + 1 > 0 ? ((-1/20) * event.nativeEvent.contentOffset.y) + 1 : 0 // linear function to set opacity
+    setRoundDelta(roundDelta) // update round delta state
+    setOpacityDelta(opacityDelta) // update opacity delta state
+    if(Math.trunc(event.nativeEvent.contentOffset.y) >= 58 && !scrolled) {
       setScrolled(true) // show header's shadow
     }
-    else if(Math.trunc(event.nativeEvent.contentOffset.y) < 63 && scrolled) {
+    else if(Math.trunc(event.nativeEvent.contentOffset.y) < 58 && scrolled) {
       setScrolled(false) // hide header's shadow
     }
   }
 
   const onRelease = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if(Math.trunc(event.nativeEvent.contentOffset.y) >= 28) {
+    if(Math.trunc(event.nativeEvent.contentOffset.y) >= 28 && Math.trunc(event.nativeEvent.contentOffset.y) <= 68) {
       ref.current.scrollTo({ x: 0, y: 68, animated: true }) // scroll to place after search bar if half of it is scrolled
     }
     else if(Math.trunc(event.nativeEvent.contentOffset.y) < 28)  {
@@ -33,14 +35,17 @@ const Chats: React.FC = () => {
   return (
     <View style={styles.container}>
       <AppHeader title='Chats' color='#fff' shadow={scrolled}/>
-      <ScrollView style={{ flex: 1 }} onScrollEndDrag={(event) => onRelease(event)} scrollEventThrottle={10} onScroll={(event) => onScroll(event)} ref={ref}>
-        <SearchBar placeholder="Search" 
-          containerStyle={{ backgroundColor: 'white', borderTopWidth: 0, borderBottomWidth: 0, shadowColor: '#000', shadowOffset: { height: 10, width: 0 }, 
-            shadowOpacity: !scrolled ? 0.05 : 0, shadowRadius: 5, borderBottomLeftRadius: 30  * roundDelta, borderBottomRightRadius: 30  * roundDelta, marginBottom: 10, paddingTop: 0 }}
-          inputStyle={{ backgroundColor: '#F5F4FA' }}
+      <ScrollView style={{ flex: 1 }} onScrollEndDrag={(event) => onRelease(event)} scrollEventThrottle={16} onScroll={(event) => onScroll(event)} ref={ref}>
+        <View style={{ backgroundColor: '#FFF', height: Dimensions.get('window').height, width: '100%', position: 'absolute', top: -Dimensions.get('window').height, left: 0, right: 0}}></View>
+        <SearchBar placeholder="Search"
+          containerStyle={{ backgroundColor: 'white', borderTopWidth: 0, borderBottomWidth: 0, shadowColor: '#DCDEF4', shadowOffset: { height: 10, width: 0 },
+            shadowOpacity: !scrolled ? 0.3 : 0, shadowRadius: 5, borderBottomLeftRadius: roundDelta <= 1 ? 30  * roundDelta : 30, borderBottomRightRadius: roundDelta <= 1 ? 30  * roundDelta : 30,
+            marginBottom: 10, paddingTop: 0, minHeight: 0, width: '100%' }}
+          inputStyle={{ backgroundColor: '#F5F4FA', opacity: 1 * opacityDelta, minHeight: 0 }}
           inputContainerStyle={{ backgroundColor: '#F5F4FA', alignSelf: 'center', borderRadius: 10, marginBottom: 10, width: '95%' }}
-        />
+          leftIconContainerStyle={{ opacity: 1 * opacityDelta }}
 
+        />
       </ScrollView>
     </View>
   );
@@ -49,7 +54,10 @@ const Chats: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#F8F9FB'
+
+
+    
   }
 })
 

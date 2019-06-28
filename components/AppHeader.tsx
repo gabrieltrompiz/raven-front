@@ -15,7 +15,7 @@ const AppHeader: React.FC<HeaderProps> = ({ title, color, dark, leftComponent, r
     <Header 
       backgroundColor={color}
       centerComponent={{ text: title, style: { color: '#000', fontFamily: 'Lato Black', fontWeight: '900', fontSize: 28 } }}
-      containerStyle={{ shadowColor: '#000', shadowOpacity: shadow ? 0.1 : 0, shadowOffset: { height: 1, width: 0 }, shadowRadius: 5, borderBottomWidth: 0, margin: 0, zIndex: 10 }}
+      containerStyle={{ shadowColor: '#DCDEF4', shadowOpacity: shadow ? 0.3 : 0, shadowOffset: { height: 10, width: 0 }, shadowRadius: 5, borderBottomWidth: 0, margin: 0, zIndex: 10 }}
       leftComponent={leftComponent}
       rightComponent={rightComponent}
     />
