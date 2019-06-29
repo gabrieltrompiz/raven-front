@@ -8,11 +8,23 @@ import Chats from './views/Chats';
 import Contacts from './views/Contacts';
 import Settings from './views/Settings';
 import Camera from './views/Camera';
+import { ChatContext } from './services/ServiceContext';
+import { SocketService } from './services/SocketService';
+import { ChatMessage } from './types';
 
 const App: React.FC = () => {
   const [isReady, setReady] = useState(false)
 
-   const _startAsync = () => {
+  const context = new SocketService();
+
+  useEffect(() => {
+    context.init()
+    return (
+      context.disconnect()
+    );
+  }, [])
+
+  const _startAsync = () => {
       return Font.loadAsync({
         'Lato Black': require('../react-app/assets/Lato-Black.ttf'),
         'Lato': require('../react-app/assets/Lato-Regular.ttf')
@@ -39,7 +51,7 @@ const App: React.FC = () => {
   }, {
     initialRouteName: 'Chats',
     tabBarOptions: {
-      style: { borderTopWidth: 0, shadowColor: 'black', shadowOpacity: 0.1, shadowOffset: { width: 0, height: -2 }, shadowRadius: 10, height: 50 },
+      style: { borderTopWidth: 0, shadowColor: '#DCDEF4', shadowOpacity: 0.3, shadowOffset: { width: 0, height: -5 }, shadowRadius: 10, height: 50 },
       activeTintColor: '#36C899',
       labelStyle: { fontWeight: '600', top: 0 }
     },
@@ -60,6 +72,7 @@ const App: React.FC = () => {
       }
     })
   })
+  
   const AppContainer: NavigationContainer = createAppContainer(TabNav)
 
   if(!isReady) {
@@ -71,18 +84,12 @@ const App: React.FC = () => {
       />
     );
   }
+
   return (
-    <AppContainer style={{ backgroundColor: 'transparent' }} />
+    <ChatContext.Provider value={context}>
+      <AppContainer style={{ backgroundColor: 'transparent' }} />
+    </ChatContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default App;

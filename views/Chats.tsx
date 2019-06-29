@@ -1,14 +1,27 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { StyleSheet, View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from 'react-native'
 import AppHeader from '../components/AppHeader';
 import { SearchBar } from 'react-native-elements';
+import ChatContainer from '../components/ChatContainer';
 
 const Chats: React.FC = () => {
+  const chatExample = { user: { name: 'Gabriel Trompiz', phone: '+58 412-7645681' }, messages: [] }
+
+  const [chats, setChats] = useState([]) // chatlist state
+
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
   const [roundDelta, setRoundDelta] = useState(1) // state for controlling border radius delta
-  const [opacityDelta, setOpacityDelta] = useState(1)
+  const [opacityDelta, setOpacityDelta] = useState(1) // state for controllling search bar opacity
 
   const ref = useRef(null) // ScrollView ref
+
+  useEffect(() => {
+    /* NEED BACKEND TO DO THIS 
+    STEPS: * subscribe to observables
+           * update states on events
+           * on return unscubscribe
+    */
+  }, [])
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => { // linear functions generate a coefficient from 0 to 1 according to scrolled distance
     const roundDelta = ((-1/55) * event.nativeEvent.contentOffset.y) + 1 > 0 ? ((-1/55) * event.nativeEvent.contentOffset.y) + 1 : 0 // linear function to set border roundness
@@ -33,8 +46,8 @@ const Chats: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <AppHeader title='Chats' color='#fff' shadow={scrolled}/>
+    <View style={{ flex: 1, backgroundColor: '#F8F9FB' }}>
+      <AppHeader title='Chats' color='#FFF' shadow={scrolled}/>
       <ScrollView style={{ flex: 1 }} onScrollEndDrag={(event) => onRelease(event)} scrollEventThrottle={16} onScroll={(event) => onScroll(event)} ref={ref}>
         <View style={{ backgroundColor: '#FFF', height: Dimensions.get('window').height, width: '100%', position: 'absolute', top: -Dimensions.get('window').height, left: 0, right: 0}}></View>
         <SearchBar placeholder="Search"
@@ -44,21 +57,13 @@ const Chats: React.FC = () => {
           inputStyle={{ backgroundColor: '#F5F4FA', opacity: 1 * opacityDelta, minHeight: 0 }}
           inputContainerStyle={{ backgroundColor: '#F5F4FA', alignSelf: 'center', borderRadius: 10, marginBottom: 10, width: '95%' }}
           leftIconContainerStyle={{ opacity: 1 * opacityDelta }}
-
         />
+        {chats.map((chat, index) => {
+          return <ChatContainer user={chat.user} messages={chat.messages} key={index} />
+        })}
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8F9FB'
-
-
-    
-  }
-})
 
 export default Chats;

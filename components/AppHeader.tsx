@@ -4,13 +4,12 @@ import { Header } from 'react-native-elements'
 interface HeaderProps {
   color: string;
   title: string;
-  dark?: boolean;
   leftComponent?: {};
   rightComponent?: {};
   shadow?: boolean;
 }
 
-const AppHeader: React.FC<HeaderProps> = ({ title, color, dark, leftComponent, rightComponent, shadow }) => {
+const AppHeader: React.FC<HeaderProps> = ({ title, color, leftComponent, rightComponent, shadow }) => {
   return (
     <Header 
       backgroundColor={color}

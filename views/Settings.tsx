@@ -4,8 +4,8 @@ import AppHeader from '../components/AppHeader';
 
 const Settings: React.FC = () => {
   return (
-    <View>
-      <AppHeader title='Settings' color='#fff'/>
+    <View style={{ flex: 1, backgroundColor: '#F8F9FB' }}>
+      <AppHeader title='Settings' color='#FFF' shadow/>
     </View>
   );
 }
