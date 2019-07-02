@@ -1,38 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
-import { AppLoading } from 'expo'
-import * as Font from 'expo-font'
-import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer } from 'react-navigation'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { Image, AsyncStorage } from 'react-native';
+import { AppLoading } from 'expo';
+import * as Font from 'expo-font';
+import { Asset } from 'expo-asset';
+import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer } from 'react-navigation';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chats from './views/Chats';
 import Contacts from './views/Contacts';
 import Settings from './views/Settings';
 import Camera from './views/Camera';
-import { ChatContext } from './services/ServiceContext';
+import GetStarted from './views/GetStarted';
+import LoginView from './views/LoginView';
+import { SocketContext } from './services/ServiceContext';
 import { SocketService } from './services/SocketService';
-import { ChatMessage } from './types';
+import { fadeIn, fromRight } from 'react-navigation-transitions';
+import useGlobal from './hooks/useGlobal'
 
 const App: React.FC = () => {
   const [isReady, setReady] = useState(false)
+  const [globalState, globalActions] = useGlobal()
+  
+  const socket = new SocketService();
 
-  const context = new SocketService();
-
-  useEffect(() => {
-    context.init()
-    return (
-      context.disconnect()
-    );
+  useEffect(() => { 
+    _retrieveState()
+    socket.init()
+    return () => {
+      socket.disconnect()
+    };
   }, [])
 
-  const _startAsync = () => {
-      return Font.loadAsync({
-        'Lato Black': require('../react-app/assets/Lato-Black.ttf'),
-        'Lato': require('../react-app/assets/Lato-Regular.ttf')
-      })
+  const _retrieveState = async () => {
+    const user = await AsyncStorage.getItem('RAVEN-USER');
+    if(user !== null) { globalActions.setUser(JSON.parse(user)) }
+  }
+
+  const _startAsync = async () => {
+    await Font.loadAsync({
+      'Lato Black': require('./assets/Lato-Black.ttf'),
+      'Lato': require('./assets/Lato-Regular.ttf'),
+      'Lato Bold': require('./assets/Lato-Bold.ttf')
+    })
+    await Asset.loadAsync([require('./assets/raven.png')])
   }
 
   const ChatsStack: NavigationContainer = createStackNavigator({
-     Chats: Chats
+    Chats: Chats
   }, { headerMode: 'none' });
   const ContactsStack: NavigationContainer = createStackNavigator({
     Contacts: Contacts
@@ -61,7 +74,7 @@ const App: React.FC = () => {
         let icon;
         switch(routeName) {
           case 'Chats': icon = <Image 
-            source={focused ? require('../react-app/assets/chats.png') : require('../react-app/assets/chats-outline.png')}
+            source={focused ? require('./assets/chats.png') : require('./assets/chats-outline.png')}
             style={{ width: 25, height: 25, bottom: 4, tintColor: tintColor, marginTop: 15 }}/>; break;
           case 'Camera': icon = <Icon name={focused ? 'camera' : 'camera-outline'} size={28} color={tintColor} style={{ top: 5 }}/>; break;
           case 'Contacts': icon = <Icon name={focused ? 'account-group' : 'account-group-outline'} size={28} color={tintColor} style={{ top: 5 }}/>; break;
@@ -72,7 +85,17 @@ const App: React.FC = () => {
       }
     })
   })
-  
+
+  const LoginStack: NavigationContainer = createStackNavigator({
+    GetStarted: GetStarted,
+    LoginView: LoginView
+  }, {
+    headerMode: 'none',
+    initialRouteName: 'GetStarted',
+    transitionConfig: () => fadeIn()
+  })
+
+  const LoginContainer: NavigationContainer = createAppContainer(LoginStack)
   const AppContainer: NavigationContainer = createAppContainer(TabNav)
 
   if(!isReady) {
@@ -84,12 +107,18 @@ const App: React.FC = () => {
       />
     );
   }
-
-  return (
-    <ChatContext.Provider value={context}>
-      <AppContainer style={{ backgroundColor: 'transparent' }} />
-    </ChatContext.Provider>
-  );
+  else if(globalState.user !== null) {
+    return (
+      <SocketContext.Provider value={socket}>
+        <AppContainer style={{ backgroundColor: 'transparent' }} />
+      </SocketContext.Provider>
+    );
+  }
+  else {
+    return (
+      <LoginContainer />
+    );
+  }
 }
 
 export default App;

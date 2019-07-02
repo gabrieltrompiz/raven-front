@@ -10,3 +10,8 @@ export interface ChatProps {
   }
   messages: ChatMessage [];
 }
+
+export interface User {
+  name: string,
+  phone: string
+}
