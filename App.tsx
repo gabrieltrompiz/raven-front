@@ -3,7 +3,7 @@ import { Image, AsyncStorage } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
-import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer, NavigationTransitionProps } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chats from './views/Chats';
 import Contacts from './views/Contacts';
@@ -13,8 +13,8 @@ import GetStarted from './views/GetStarted';
 import LoginView from './views/LoginView';
 import { SocketContext } from './services/ServiceContext';
 import { SocketService } from './services/SocketService';
-import { fadeIn, fromRight } from 'react-navigation-transitions';
 import useGlobal from './hooks/useGlobal'
+import RegisterView from './views/RegisterView';
 
 const App: React.FC = () => {
   const [isReady, setReady] = useState(false)
@@ -88,11 +88,11 @@ const App: React.FC = () => {
 
   const LoginStack: NavigationContainer = createStackNavigator({
     GetStarted: GetStarted,
-    LoginView: LoginView
+    LoginView: LoginView,
+    RegisterView: RegisterView
   }, {
     headerMode: 'none',
-    initialRouteName: 'GetStarted',
-    transitionConfig: () => fadeIn()
+    initialRouteName: 'RegisterView'
   })
 
   const LoginContainer: NavigationContainer = createAppContainer(LoginStack)
