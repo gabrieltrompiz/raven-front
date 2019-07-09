@@ -15,11 +15,17 @@ import { SocketContext } from './services/ServiceContext';
 import { SocketService } from './services/SocketService';
 import useGlobal from './hooks/useGlobal'
 import RegisterView from './views/RegisterView';
+import RegisterProfileView from './views/RegisterProfileView';
 
 const App: React.FC = () => {
+  //Dev:
+  console.disableYellowBox = true;
+
   const [isReady, setReady] = useState(false)
   const [globalState, globalActions] = useGlobal()
-  
+  const [token, setToken] = useState(null)
+  const [email, setEmail] = useState(null)
+
   const socket = new SocketService();
 
   useEffect(() => { 
@@ -31,8 +37,15 @@ const App: React.FC = () => {
   }, [])
 
   const _retrieveState = async () => {
+    AsyncStorage.removeItem('RAVEN-TOKEN')
+    AsyncStorage.removeItem('RAVEN-TOKEN-EMAIL')
+    AsyncStorage.removeItem('RAVEN-USER')
     const user = await AsyncStorage.getItem('RAVEN-USER');
+    const _token = await AsyncStorage.getItem('RAVEN-TOKEN')
+    const _email = await AsyncStorage.getItem('RAVEN-TOKEN-EMAIL')
     if(user !== null) { globalActions.setUser(JSON.parse(user)) }
+    if(_token !== null) { setToken(_token) }
+    if(_email !== null) { setEmail(_email) }
   }
 
   const _startAsync = async () => {
@@ -89,10 +102,11 @@ const App: React.FC = () => {
   const LoginStack: NavigationContainer = createStackNavigator({
     GetStarted: GetStarted,
     LoginView: LoginView,
-    RegisterView: RegisterView
+    RegisterView: RegisterView,
+    RegisterProfileView: RegisterProfileView
   }, {
     headerMode: 'none',
-    initialRouteName: 'RegisterView'
+    initialRouteName: 'GetStarted'
   })
 
   const LoginContainer: NavigationContainer = createAppContainer(LoginStack)
@@ -112,6 +126,11 @@ const App: React.FC = () => {
       <SocketContext.Provider value={socket}>
         <AppContainer style={{ backgroundColor: 'transparent' }} />
       </SocketContext.Provider>
+    );
+  }
+  else if(token !== null) {
+    return (
+      <RegisterProfileView token={token} email={email} />
     );
   }
   else {
