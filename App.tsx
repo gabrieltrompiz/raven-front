@@ -37,9 +37,6 @@ const App: React.FC = () => {
   }, [])
 
   const _retrieveState = async () => {
-    AsyncStorage.removeItem('RAVEN-TOKEN')
-    AsyncStorage.removeItem('RAVEN-TOKEN-EMAIL')
-    AsyncStorage.removeItem('RAVEN-USER')
     const user = await AsyncStorage.getItem('RAVEN-USER');
     const _token = await AsyncStorage.getItem('RAVEN-TOKEN')
     const _email = await AsyncStorage.getItem('RAVEN-TOKEN-EMAIL')
@@ -99,18 +96,20 @@ const App: React.FC = () => {
     })
   })
 
+  const AppContainer: NavigationContainer = createAppContainer(TabNav)
+
   const LoginStack: NavigationContainer = createStackNavigator({
     GetStarted: GetStarted,
     LoginView: LoginView,
     RegisterView: RegisterView,
-    RegisterProfileView: RegisterProfileView
+    RegisterProfileView: RegisterProfileView,
+    App: AppContainer
   }, {
     headerMode: 'none',
     initialRouteName: 'GetStarted'
   })
 
   const LoginContainer: NavigationContainer = createAppContainer(LoginStack)
-  const AppContainer: NavigationContainer = createAppContainer(TabNav)
 
   if(!isReady) {
     return (

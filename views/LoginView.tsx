@@ -12,9 +12,28 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const login = async () => {
-
+    setLoading(true);
+    const body = {
+      email: email,
+      password: password
+    };
+    await fetch(server + '/login', { body: JSON.stringify(body), method: "POST", headers: {"Content-Type": "application/json; charset=utf-8"} })
+      .then(response => response.json())
+      .then(response => {
+        setLoading(false);
+        if(response.status === 200) {
+          navigation.navigate('App');
+        } else {
+          setLoginError('Error trying to login. Email or password incorrect');
+        }
+      }).catch(err => {
+        setLoading(false);
+        setLoginError('Error trying to login. Check your internet connection')
+      })
   }
 
   return (
@@ -36,7 +55,7 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
         inputContainerStyle={{ borderBottomWidth: 0 }}
         inputStyle={{ fontFamily: 'Lato Bold' }}
         autoCapitalize='none'
-        onChange={(event) => { setEmail(event.nativeEvent.text) }}
+        onChange={(event) => { setEmail(event.nativeEvent.text); setLoginError(''); }}
         value={email}
         spellCheck={false}        
       />

@@ -28,8 +28,6 @@ const RegisterProfileView: React.FC<RPProps> = ({ token, email, navigation }) =>
 
   const _token = token ? token : navigation.getParam('token', '');
   const _email = email ? email : navigation.getParam('email', '');
-  
-  console.log(_token + ":" + _email)
 
   const server = require('../config.json').server
 
@@ -39,6 +37,7 @@ const RegisterProfileView: React.FC<RPProps> = ({ token, email, navigation }) =>
     else if(password.trim() === '') { setErrorPassword('Please enter a valid password.') }
     else if(username.trim() === '') { setErrorUsername('Please enter a valid username.') }
     else {
+      setLoading(true)
       const body = {
         email: _email,
         password: password,
@@ -52,7 +51,7 @@ const RegisterProfileView: React.FC<RPProps> = ({ token, email, navigation }) =>
       .then(response => {
         if(response.status === 200) {
           const user = response.data
-          globalActions.setUser(user)
+          navigation.navigate('App')
         }
         else {
           console.log(response.message)
@@ -61,6 +60,7 @@ const RegisterProfileView: React.FC<RPProps> = ({ token, email, navigation }) =>
       .catch(err => {
         console.log(err)
       })
+      setLoading(false)
     }
   }
 
