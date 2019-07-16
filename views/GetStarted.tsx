@@ -3,7 +3,6 @@ import { View, Text, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient'
 import { NavigationContainerProps } from 'react-navigation';
-import useGlobal from '../hooks/useGlobal'
 
 const GetStarted: React.FC<NavigationContainerProps> = ({ navigation }) => {
   return (

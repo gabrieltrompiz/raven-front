@@ -1,43 +1,52 @@
 import React, { useState, useEffect } from 'react'
-import { View, Image, TextInput, Text, Animated } from 'react-native'
+import { View, Image, TextInput, Text, Animated, AsyncStorage, Keyboard } from 'react-native'
 import { NavigationContainerProps } from 'react-navigation';
 import AppHeader from '../components/AppHeader';
 import { Button, Input, Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as EmailValidator from 'email-validator';
-import useGlobal from '../hooks/useGlobal'
+import LoadingView from './LoadingView';
+import * as SecureStore from 'expo-secure-store';
 
 const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
-  const server = require('../config.json').server
-
+  
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
+  const server = require('../config.json').server
+
   const login = async () => {
+    Keyboard.dismiss()
     setLoading(true);
     const body = {
       email: email,
       password: password
     };
-    await fetch(server + '/login', { body: JSON.stringify(body), method: "POST", headers: {"Content-Type": "application/json; charset=utf-8"} })
+    await fetch(server + 'login', { body: JSON.stringify(body), method: "POST", headers: { "Content-Type": "application/json; charset=utf-8" }, credentials: 'include' })
       .then(response => response.json())
       .then(response => {
         setLoading(false);
         if(response.status === 200) {
-          navigation.navigate('App');
+          setLoading(false)
+          const user = response.user
+          AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user))
+          SecureStore.setItemAsync('RAVEN-PWD', password, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY })
+          navigation.navigate('App')
         } else {
-          setLoginError('Error trying to login. Email or password incorrect');
+          setLoading(false)
+          setLoginError('Wrong credentials. Email or password incorrect.');
         }
       }).catch(err => {
         setLoading(false);
-        setLoginError('Error trying to login. Check your internet connection')
+        setLoginError('Error trying to login. Check your internet connection.')
       })
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F8F9FB', alignItems: 'center' }}>
+      {loading && <LoadingView />}
       <AppHeader shadow color='#FFF' title=''
       leftComponent={
         <Button icon={{ name: 'chevron-left', color: '#36C899' }} onPress={() => navigation.goBack()} title='Get Started' buttonStyle={{ backgroundColor: 'transparent', width: 100 }}
@@ -57,7 +66,7 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
         autoCapitalize='none'
         onChange={(event) => { setEmail(event.nativeEvent.text); setLoginError(''); }}
         value={email}
-        spellCheck={false}        
+        spellCheck={false}
       />
       <Input 
         placeholder='Password'
@@ -74,7 +83,7 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
       <LinearGradient colors={['#33CA9B', '#4FC77F']} style={{ width: '80%', height: 50, marginTop: 10, borderRadius: 10,
         alignItems: 'center', justifyContent: 'center' }} start={[0, 0]}>
         <Button containerStyle={{ backgroundColor: 'transparent', width: '100%', height: '100%' }} buttonStyle={{ backgroundColor: 'transparent', width: '100%', height: '100%' }} 
-          titleStyle={{ fontFamily: 'Lato Black' }} title="Login" onPress={() => checkEmail()}/>
+          titleStyle={{ fontFamily: 'Lato Black' }} title="Login" onPress={() => login()}/>
       </LinearGradient>
       <View style={{ width: '90%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 15 }}>
         <View style={{ width: '40%', height: 2, backgroundColor: '#E0E0E0' }}/>
@@ -84,7 +93,7 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
       <LinearGradient colors={['#4FC77F', '#33CA9B']} style={{ width: '80%', height: 50, marginTop: 15, borderRadius: 10,
         alignItems: 'center', justifyContent: 'center' }} start={[0, 0]}>
         <Button containerStyle={{ backgroundColor: 'transparent', width: '100%', height: '100%' }} buttonStyle={{ backgroundColor: 'transparent', width: '100%', height: '100%' }} 
-          titleStyle={{ fontFamily: 'Lato Black', fontSize: 18 }} title="Sign up" onPress={() => navigation.navigate('RegisterView')}/>
+          titleStyle={{ fontFamily: 'Lato Black', fontSize: 18 }} title="Sign up" onPress={() => navigation.navigate('CodeVerificationView')}/>
       </LinearGradient>
     </View>
   );

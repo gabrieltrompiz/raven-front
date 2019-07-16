@@ -3,7 +3,7 @@ import { Image, AsyncStorage } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
-import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer, NavigationTransitionProps } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chats from './views/Chats';
 import Contacts from './views/Contacts';
@@ -11,18 +11,22 @@ import Settings from './views/Settings';
 import Camera from './views/Camera';
 import GetStarted from './views/GetStarted';
 import LoginView from './views/LoginView';
+import CodeVerificationView from './views/CodeVerificationView';
+import RegisterView from './views/RegisterView';
+import ChatView from './views/ChatView'
 import { SocketContext } from './services/ServiceContext';
 import { SocketService } from './services/SocketService';
-import useGlobal from './hooks/useGlobal'
-import RegisterView from './views/RegisterView';
-import RegisterProfileView from './views/RegisterProfileView';
+import * as SecureStore from 'expo-secure-store';
+
 
 const App: React.FC = () => {
   //Dev:
   console.disableYellowBox = true;
 
+  const server = require('./config.json').server
+
   const [isReady, setReady] = useState(false)
-  const [globalState, globalActions] = useGlobal()
+  const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
   const [email, setEmail] = useState(null)
 
@@ -40,22 +44,38 @@ const App: React.FC = () => {
     const user = await AsyncStorage.getItem('RAVEN-USER');
     const _token = await AsyncStorage.getItem('RAVEN-TOKEN')
     const _email = await AsyncStorage.getItem('RAVEN-TOKEN-EMAIL')
-    if(user !== null) { globalActions.setUser(JSON.parse(user)) }
     if(_token !== null) { setToken(_token) }
     if(_email !== null) { setEmail(_email) }
+    if(user !== null) { 
+      setUser(JSON.parse(user)) 
+      const _pwd = await SecureStore.getItemAsync('RAVEN-PWD')
+      const body = {
+        email: JSON.parse(user).email,
+        password: _pwd
+      }
+      await fetch(server + 'login', { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json; charset=utf-8' }, credentials: 'include' })
+      .then(response => response.json())
+      .then(response => {
+        if(response.status === 200) {
+          console.log('XD')
+        }
+      })
+    }
   }
 
   const _startAsync = async () => {
     await Font.loadAsync({
       'Lato Black': require('./assets/Lato-Black.ttf'),
       'Lato': require('./assets/Lato-Regular.ttf'),
-      'Lato Bold': require('./assets/Lato-Bold.ttf')
+      'Lato Bold': require('./assets/Lato-Bold.ttf'),
+      'Lato Light': require('./assets/Lato-Light.ttf')
     })
-    await Asset.loadAsync([require('./assets/raven.png')])
+    await Asset.loadAsync([require('./assets/raven.png'), require('./assets/right-arrow.png')])
   }
 
   const ChatsStack: NavigationContainer = createStackNavigator({
-    Chats: Chats
+    Chats: Chats,
+    ChatView: ChatView
   }, { headerMode: 'none' });
   const ContactsStack: NavigationContainer = createStackNavigator({
     Contacts: Contacts
@@ -101,15 +121,24 @@ const App: React.FC = () => {
   const LoginStack: NavigationContainer = createStackNavigator({
     GetStarted: GetStarted,
     LoginView: LoginView,
+    CodeVerificationView: CodeVerificationView,
     RegisterView: RegisterView,
-    RegisterProfileView: RegisterProfileView,
-    App: AppContainer
   }, {
     headerMode: 'none',
-    initialRouteName: 'GetStarted'
+    initialRouteName: !token ? 'GetStarted' : 'RegisterView'
   })
 
   const LoginContainer: NavigationContainer = createAppContainer(LoginStack)
+
+  const AppStack: NavigationContainer = createStackNavigator({
+    App: AppContainer,
+    Login: LoginContainer 
+  }, {
+    headerMode: 'none',
+    initialRouteName: user ? 'App' : 'Login',
+  })
+
+  const MainApp: NavigationContainer = createAppContainer(AppStack)
 
   if(!isReady) {
     return (
@@ -120,21 +149,11 @@ const App: React.FC = () => {
       />
     );
   }
-  else if(globalState.user !== null) {
-    return (
-      <SocketContext.Provider value={socket}>
-        <AppContainer style={{ backgroundColor: 'transparent' }} />
-      </SocketContext.Provider>
-    );
-  }
-  else if(token !== null) {
-    return (
-      <RegisterProfileView token={token} email={email} />
-    );
-  }
   else {
     return (
-      <LoginContainer />
+      <SocketContext.Provider value={socket}>
+        <MainApp style={{ backgroundColor: 'transparent' }} screenProps={{ token: token, email: email }} />
+      </SocketContext.Provider>
     );
   }
 }

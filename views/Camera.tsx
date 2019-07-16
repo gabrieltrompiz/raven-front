@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 const Camera: React.FC = () => {
   return (
     <View>
-      <Text>Camera</Text>
+      <Text>Camera</Text> 
     </View>
   );
 }

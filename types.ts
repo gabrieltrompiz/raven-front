@@ -1,17 +1,21 @@
-export interface ChatMessage {
-  author: string;
-  message: string;
-}
+import { NavigationScreenProp, NavigationParams } from "react-navigation";
 
 export interface ChatProps {
-  user: {
-    name: string;
-    phone: string;
-  }
-  messages: ChatMessage [];
+  user: User,
+  messages: ChatMessage [],
+  navigation: NavigationScreenProp<{}, NavigationParams>
 }
 
 export interface User {
   name: string,
-  phone: string
+  phone: string,
+  email: string
+}
+
+export interface ChatMessage {
+  id: number,
+  user: User,
+  attachment: string,
+  body: string,
+  time: number
 }

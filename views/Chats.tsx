@@ -3,12 +3,13 @@ import { StyleSheet, View, Text, ScrollView, NativeSyntheticEvent, NativeScrollE
 import AppHeader from '../components/AppHeader';
 import { SearchBar } from 'react-native-elements';
 import ChatContainer from '../components/ChatContainer';
+import { NavigationContainerProps } from 'react-navigation';
 
-const Chats: React.FC = () => {
-  const chatExample = { user: { name: 'Gabriel Trompiz', phone: '+58 412-7645681' }, messages: [] }
+const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
+  const message = { user: { name: 'Gabriel Trompiz', phone: '+58 412-7645681', email: 'gab.tc@icloud.com' }, attachment: '', body: 'Hello', id: 1, time: Date.now() }
+  const chatExample = { user: { name: 'Gabriel Trompiz', phone: '+58 412-7645681', email: 'gab.tc@icloud.com' }, messages: [message, message] }
 
-  const [chats, setChats] = useState([]) // chatlist state
-
+  const [chats, setChats] = useState([chatExample, chatExample]) // chatlist state
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
   const [roundDelta, setRoundDelta] = useState(1) // state for controlling border radius delta
   const [opacityDelta, setOpacityDelta] = useState(1) // state for controllling search bar opacity
@@ -16,11 +17,7 @@ const Chats: React.FC = () => {
   const ref = useRef(null) // ScrollView ref
 
   useEffect(() => {
-    /* NEED BACKEND TO DO THIS 
-    STEPS: * subscribe to observables
-           * update states on events
-           * on return unscubscribe
-    */
+       
   }, [])
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => { // linear functions generate a coefficient from 0 to 1 according to scrolled distance
@@ -59,7 +56,10 @@ const Chats: React.FC = () => {
           leftIconContainerStyle={{ opacity: 1 * opacityDelta }}
         />
         {chats.map((chat, index) => {
-          return <ChatContainer user={chat.user} messages={chat.messages} key={index} />
+          return (<View style={{ width: '100%', alignItems: 'center' }} key={index}>
+            <ChatContainer user={chat.user} messages={chat.messages} key={index} navigation={navigation} />
+            <View style={{ width: '95%', height: 1, backgroundColor: '#EEEEEE', marginTop: 5, marginBottom: 5 }}/>  
+          </View>)
         })}
       </ScrollView>
     </View>
