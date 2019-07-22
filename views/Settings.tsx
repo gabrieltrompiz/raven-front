@@ -6,9 +6,13 @@ import { Button } from 'react-native-elements';
 import { NavigationContainerProps } from 'react-navigation';
 import LoadingView from './LoadingView';
 import * as SecureStore from 'expo-secure-store'
+import { useDispatch } from 'react-redux'
+import { DELETE_USER } from '../redux/actionTypes'
 
 const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const server = require('../config.json').server
+
+  const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(false)
 
@@ -16,15 +20,19 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
     setLoading(true)
     await fetch(server + 'logout', { credentials: 'include' } )
     .then(response => response.json())
-    .then(response => {
+    .then(async (response) => {
       console.log(response)
       if(response.status === 200) {
-        AsyncStorage.removeItem('RAVEN-USER')
-        SecureStore.deleteItemAsync('RAVEN-PWD')
-        navigation.dangerouslyGetParent().navigate('LoginView')
+        console.log(response)
+        setTimeout(async () => {
+          setLoading(false)
+          await AsyncStorage.removeItem('RAVEN-USER')
+          await SecureStore.deleteItemAsync('RAVEN-PWD')
+          navigation.dangerouslyGetParent().dangerouslyGetParent().navigate('LoginView')
+          dispatch({ type: DELETE_USER })
+        }, 500)
       }
     })
-    setTimeout(() => setLoading(false), 500)
   }
     
   return (

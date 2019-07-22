@@ -3,7 +3,8 @@ import { NavigationScreenProp, NavigationParams } from "react-navigation";
 export interface ChatProps {
   user: User,
   messages: ChatMessage [],
-  navigation: NavigationScreenProp<{}, NavigationParams>
+  navigation: NavigationScreenProp<{}, NavigationParams>,
+  id: number
 }
 
 export interface User {
@@ -17,5 +18,6 @@ export interface ChatMessage {
   user: User,
   attachment: string,
   body: string,
-  time: number
+  time: number,
+  chat: number
 }

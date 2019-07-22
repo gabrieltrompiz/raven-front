@@ -7,9 +7,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as EmailValidator from 'email-validator';
 import LoadingView from './LoadingView';
 import * as SecureStore from 'expo-secure-store';
+import { useDispatch } from 'react-redux'
+import { SET_USER } from '../redux/actionTypes'
 
 const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
-  
+  const dispatch = useDispatch()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false);
@@ -26,14 +29,15 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
     };
     await fetch(server + 'login', { body: JSON.stringify(body), method: "POST", headers: { "Content-Type": "application/json; charset=utf-8" }, credentials: 'include' })
       .then(response => response.json())
-      .then(response => {
+      .then(async (response) => {
         setLoading(false);
-        if(response.status === 200) {
-          setLoading(false)
+        console.log(response)
+        if(response.status === 200) {     
           const user = response.user
-          AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user))
-          SecureStore.setItemAsync('RAVEN-PWD', password, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY })
+          await AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user))
+          await SecureStore.setItemAsync('RAVEN-PWD', password, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY })
           navigation.navigate('App')
+          dispatch({ type: SET_USER, payload: { user: user } })
         } else {
           setLoading(false)
           setLoginError('Wrong credentials. Email or password incorrect.');

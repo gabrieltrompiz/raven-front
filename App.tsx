@@ -17,16 +17,21 @@ import ChatView from './views/ChatView'
 import { SocketContext } from './services/ServiceContext';
 import { SocketService } from './services/SocketService';
 import * as SecureStore from 'expo-secure-store';
+import store from './redux/store'
+import { Provider, useDispatch, useSelector, connect } from 'react-redux'
+import { SET_USER, ADD_MESSAGE } from './redux/actionTypes'
+import { ChatMessage } from './types';
 
-
-const App: React.FC = () => {
+const ConsumerApp: React.FC = () => {
   //Dev:
   console.disableYellowBox = true;
 
   const server = require('./config.json').server
 
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
+
   const [isReady, setReady] = useState(false)
-  const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
   const [email, setEmail] = useState(null)
 
@@ -34,33 +39,51 @@ const App: React.FC = () => {
 
   useEffect(() => { 
     _retrieveState()
-    socket.init()
     return () => {
       socket.disconnect()
-    };
+    }
   }, [])
 
+  useEffect(() => {
+    if(user !== null) {
+      subscribeToEvents()
+    }
+  }, [user])
+
+  const subscribeToEvents = async () => {
+    await _autoLogin()
+    socket.init()
+    socket.onRelog().subscribe(async () => {
+      socket.disconnect()
+      await _autoLogin()
+      socket.init()
+    })
+    socket.onMessage().subscribe((m: ChatMessage) => {
+      dispatch({ type: ADD_MESSAGE, payload: { message: m, id: m.chat } })
+    })
+  }
+
   const _retrieveState = async () => {
-    const user = await AsyncStorage.getItem('RAVEN-USER');
+    // await AsyncStorage.removeItem('RAVEN-TOKEN')
+    // await AsyncStorage.removeItem('RAVEN-TOKEN-EMAIL')
+    // await AsyncStorage.removeItem('RAVEN-USER')
+    const _user = await AsyncStorage.getItem('RAVEN-USER');
     const _token = await AsyncStorage.getItem('RAVEN-TOKEN')
     const _email = await AsyncStorage.getItem('RAVEN-TOKEN-EMAIL')
     if(_token !== null) { setToken(_token) }
     if(_email !== null) { setEmail(_email) }
-    if(user !== null) { 
-      setUser(JSON.parse(user)) 
-      const _pwd = await SecureStore.getItemAsync('RAVEN-PWD')
-      const body = {
-        email: JSON.parse(user).email,
-        password: _pwd
-      }
-      await fetch(server + 'login', { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json; charset=utf-8' }, credentials: 'include' })
-      .then(response => response.json())
-      .then(response => {
-        if(response.status === 200) {
-          console.log('XD')
-        }
-      })
+    if(_user !== null) { dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } }); }
+  }
+
+  const _autoLogin = async () => {
+    console.log('loggin auto')
+    const _pwd = await SecureStore.getItemAsync('RAVEN-PWD')
+    const body = {
+      email: user.email,
+      password: _pwd
     }
+    await fetch(server + 'login', { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json; charset=utf-8' }, credentials: 'include' })
+    .catch(console.log)
   }
 
   const _startAsync = async () => {
@@ -156,6 +179,14 @@ const App: React.FC = () => {
       </SocketContext.Provider>
     );
   }
+}
+
+const App: React.FC = () => {
+  return (
+    <Provider store={store}>
+      <ConsumerApp />
+    </Provider>
+  )
 }
 
 export default App;

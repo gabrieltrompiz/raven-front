@@ -1,7 +1,6 @@
 import React , { useContext } from 'react'
 import { ChatProps, User, ChatMessage } from '../types';
 import { View } from 'react-native';
-import AppHeader from '../components/AppHeader';
 import { NavigationContainerProps, NavigationScreenProp, NavigationParams } from 'react-navigation';
 import ChatHeader from '../components/ChatHeader';
 

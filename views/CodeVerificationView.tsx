@@ -74,12 +74,14 @@ const CodeVerificationView: React.FC<NavigationContainerProps> = ({ navigation }
       setLoading(true)
       await fetch(server + 'checkCode?email=' + email + "&code=" + fullCode)
       .then(response => response.json())
-      .then(response => {
+      .then(async (response) => {
         if(response.status === 200) {
-          setTimeout(() => setLoading(false), 500)
-          AsyncStorage.setItem('RAVEN-TOKEN', response.token)
-          AsyncStorage.setItem('RAVEN-TOKEN-EMAIL', email)
-          navigation.navigate('RegisterView', { token: response.token, email: email })
+          setTimeout(async () => {
+            setLoading(false)
+            await AsyncStorage.setItem('RAVEN-TOKEN', response.token)
+            await AsyncStorage.setItem('RAVEN-TOKEN-EMAIL', email)
+            navigation.navigate('RegisterView', { token: response.token, email: email })
+          }, 500)
         } else {
           setTimeout(() => { 
             setLoading(false)

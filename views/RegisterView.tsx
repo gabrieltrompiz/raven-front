@@ -5,8 +5,12 @@ import { Input, Button } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient'
 import LoadingView from './LoadingView'
 import { NavigationContainerProps } from 'react-navigation';
+import * as SecureStore from 'expo-secure-store'
+import { useDispatch } from 'react-redux'
+import { SET_USER } from '../redux/actionTypes'
 
 const RegisterView: React.FC<NavigationContainerProps> = ({ navigation, screenProps }) => {
+  const dispatch = useDispatch()
 
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
@@ -19,8 +23,8 @@ const RegisterView: React.FC<NavigationContainerProps> = ({ navigation, screenPr
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const _token = screenProps.token
-  const _email = screenProps.email
+  const _token = screenProps.token ? screenProps.token : navigation.getParam('token', null)
+  const _email = screenProps.email ? screenProps.email : navigation.getParam('email', null)
 
   const server = require('../config.json').server
 
@@ -39,24 +43,30 @@ const RegisterView: React.FC<NavigationContainerProps> = ({ navigation, screenPr
         token: _token,
         username: username
       }
+      console.log(body)
       await fetch(server + "register", { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json; charset=utf-8' } })
       .then(response => response.json())
-      .then(response => {
+      .then(async (response) => {
+        console.log(response)
         if(response.status === 200) {
-          const user = response.data
-          AsyncStorage.removeItem('RAVEN-TOKEN')
-          AsyncStorage.removeItem('RAVEN-TOKEN-EMAIL')
-          AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user))
+          setLoading(false)
+          const user = response.data.user
+          await AsyncStorage.removeItem('RAVEN-TOKEN')
+          await AsyncStorage.removeItem('RAVEN-TOKEN-EMAIL')
+          await AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user))
+          await SecureStore.setItemAsync('RAVEN-PWD', password, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY })
           navigation.navigate('App')
+          dispatch({ type: SET_USER, payload: { user: user } })
         }
         else {
+          setLoading(false)
           console.log(response.message)
         }
       })
       .catch(err => {
+        setLoading(false)
         console.log(err)
       })
-      setLoading(false)
     }
   }
 

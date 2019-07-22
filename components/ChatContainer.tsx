@@ -12,7 +12,7 @@ const ChatContainer: React.FC<ChatProps> = ({ user, messages, navigation }) => {
           <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: '#DDDDDD', padding: 20, marginLeft: 10, marginRight: 10 }} />
           <View>
             <Text style={styles.name}>{user.name}</Text>
-            <Text style={styles.message}>{messages[0].body}</Text>
+            <Text style={styles.message}>{messages[messages.length - 1].body}</Text>
           </View>
         </View>
         <View style={{ justifyContent: 'space-around', alignContent: 'space-around', height: 60 }}>
