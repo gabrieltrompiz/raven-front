@@ -21,6 +21,11 @@ import store from './redux/store'
 import { Provider, useDispatch, useSelector, connect } from 'react-redux'
 import { SET_USER, ADD_MESSAGE } from './redux/actionTypes'
 import { ChatMessage } from './types';
+import AccountSettings from './views/AccountSettings';
+import ChatSettings from './views/ChatSettings';
+import NotificationSettings from './views/NotificationSettings';
+import SavedMessages from './views/SavedMessages';
+import Profile from './views/Profile';
 
 const ConsumerApp: React.FC = () => {
   //Dev:
@@ -104,7 +109,12 @@ const ConsumerApp: React.FC = () => {
     Contacts: Contacts
   }, { headerMode: 'none' })
   const SettingsStack: NavigationContainer = createStackNavigator({
-    Settings: Settings
+    Settings: Settings,
+    Profile: Profile,
+    AccountSettings: AccountSettings,
+    ChatSettings: ChatSettings,
+    NotificationSettings: NotificationSettings,
+    SavedMessages: SavedMessages
   }, { headerMode: 'none' })
   const CameraStack: NavigationContainer = createStackNavigator({
     Camera: Camera
