@@ -26,6 +26,8 @@ import ChatSettings from './views/ChatSettings';
 import NotificationSettings from './views/NotificationSettings';
 import SavedMessages from './views/SavedMessages';
 import Profile from './views/Profile';
+import StatusView from './views/StatusView';
+import PictureViewer from './views/PictureViewer';
 
 const ConsumerApp: React.FC = () => {
   //Dev:
@@ -114,7 +116,9 @@ const ConsumerApp: React.FC = () => {
     AccountSettings: AccountSettings,
     ChatSettings: ChatSettings,
     NotificationSettings: NotificationSettings,
-    SavedMessages: SavedMessages
+    SavedMessages: SavedMessages,
+    StatusView: StatusView,
+    PictureViewer: PictureViewer
   }, { headerMode: 'none' })
   const CameraStack: NavigationContainer = createStackNavigator({
     Camera: Camera
