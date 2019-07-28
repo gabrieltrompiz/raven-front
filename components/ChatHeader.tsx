@@ -1,13 +1,17 @@
 import React from 'react'
-import { User } from '../types';
-import { Header } from 'react-native-elements';
+import { ChatHeaderProps } from '../types';
+import { Header, Button } from 'react-native-elements';
 
-const ChatHeader: React.FC<User> = ({ name, email, phone }) => {
+const ChatHeader: React.FC<ChatHeaderProps> = ({ name, email, phone, navigation }) => {
   return (
     <Header 
       backgroundColor='#FFFFFF'
-      containerStyle={{ shadowColor: '#DCDEF4', shadowOpacity: 0.3, shadowOffset: { height: 10, width: 0 }, shadowRadius: 5, borderBottomWidth: 0, margin: 0, zIndex: 10 }}
+      containerStyle={{ shadowColor: '#DCDEF4', borderBottomWidth: 0.2, margin: 0, zIndex: 10, borderBottomColor: '#AAAAAA' }}
       centerComponent={{ text: name, style: { color: '#000', fontFamily: 'Lato Bold', fontSize: 20 } }}
+      leftComponent={
+        <Button icon={{ name: 'chevron-left', color: '#36C899' }} onPress={() => navigation.goBack()} title='Chats' buttonStyle={{ backgroundColor: 'transparent', left: -12 }}
+        titleStyle={{ color: '#36C899', fontFamily: 'Lato Bold', left: -6 }}/>
+      }
     />
   );
 }

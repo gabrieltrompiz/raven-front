@@ -1,8 +1,11 @@
-import { SET_USER, DELETE_USER, ADD_MESSAGE } from '../actionTypes'
+import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE } from '../actionTypes'
+import { AsyncStorage } from 'react-native'
 
 const initialState = {
   user: null,
-  chats: {}
+  chats: {},
+  connected: false,
+  timeline: []
 }
 
 export default function(state = initialState, action) {
@@ -25,18 +28,58 @@ export default function(state = initialState, action) {
     case ADD_MESSAGE: {
       const { message, id } = action.payload
       const chats = Object.assign({}, state.chats);
-      if(typeof chats[id] === 'undefined') {
-        chats[id] = {}
-        chats[id].messages = []
-        chats[id].user = message.user
+      let timeline = [...state.timeline]
+      if(message.type === 1) {
+        if(typeof chats[message.user.email] === 'undefined') {
+          chats[message.user.email] = {}
+          chats[message.user.email].messages = []
+          chats[message.user.email].user = message.user
+        }
+        chats[message.user.email].messages.push(message)
+        if(timeline.includes(message.user.email) && timeline.indexOf(message.user.email) > 0) {
+          timeline.splice(timeline.indexOf(message.user.email))
+          timeline.unshift(message.user.email)
+        } else if(timeline.indexOf(message.user.email) === -1) {
+          timeline.unshift(message.user.email)
+        }
       }
-      chats[id].messages.push(message)
+      else {
+        if(typeof chats[id] === 'undefined') {
+          chats[id] = {}
+          chats[id].messages = []
+          chats[id].user = message.user
+        }
+        chats[id].messages.push(message)
+        if(timeline.includes(id) && timeline.indexOf(id) > 0) {
+          timeline.splice(timeline.indexOf(id))
+          timeline.unshift(id)
+        } else if(timeline.indexOf(id) === -1) {
+          timeline.unshift(id)
+        }
+      }
       return {
         ...state,
-        chats: chats
+        chats: chats,
+        timeline: timeline
       }
     }
 
+    case SET_CONNECTED: {
+      const { connected } = action.payload
+      return {
+        ...state,
+        connected: connected 
+      }
+    }
+
+    case SET_CHAT_TIMELINE: {
+      const { chats, timeline } = action.payload
+      return {
+        ...state,
+        chats: chats,
+        timeline: timeline
+      }
+    } 
     default: return state;
   }
 }

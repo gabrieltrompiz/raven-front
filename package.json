@@ -15,6 +15,7 @@
     "expo": "^33.0.0",
     "expo-asset": "^5.0.1",
     "expo-blur": "~5.0.1",
+    "expo-camera": "~5.0.1",
     "expo-font": "~5.0.1",
     "expo-linear-gradient": "~5.0.1",
     "expo-secure-store": "~5.0.1",

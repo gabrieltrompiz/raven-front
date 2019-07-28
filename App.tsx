@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chats from './views/Chats';
 import Contacts from './views/Contacts';
 import Settings from './views/Settings';
-import Camera from './views/Camera';
 import GetStarted from './views/GetStarted';
 import LoginView from './views/LoginView';
 import CodeVerificationView from './views/CodeVerificationView';
@@ -19,8 +18,9 @@ import { SocketService } from './services/SocketService';
 import * as SecureStore from 'expo-secure-store';
 import store from './redux/store'
 import { Provider, useDispatch, useSelector, connect } from 'react-redux'
-import { SET_USER, ADD_MESSAGE } from './redux/actionTypes'
+import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE } from './redux/actionTypes'
 import { ChatMessage } from './types';
+import CameraView from './views/CameraView';
 import AccountSettings from './views/AccountSettings';
 import ChatSettings from './views/ChatSettings';
 import NotificationSettings from './views/NotificationSettings';
@@ -42,7 +42,8 @@ const ConsumerApp: React.FC = () => {
   const [token, setToken] = useState(null)
   const [email, setEmail] = useState(null)
 
-  const socket = new SocketService();
+  const init = new SocketService();
+  const [socket, setSocket] = useState(init)
 
   useEffect(() => { 
     _retrieveState()
@@ -53,20 +54,20 @@ const ConsumerApp: React.FC = () => {
 
   useEffect(() => {
     if(user !== null) {
-      subscribeToEvents()
+      _subscribeToEvents()
     }
   }, [user])
 
-  const subscribeToEvents = async () => {
+  const _subscribeToEvents = async () => {
     await _autoLogin()
-    socket.init()
+    setSocket(socket.init())
+    dispatch({ type: SET_CONNECTED, payload: { connected: true }})
     socket.onRelog().subscribe(async () => {
       socket.disconnect()
+      dispatch({ type: SET_CONNECTED, payload: { connected: false } })
       await _autoLogin()
-      socket.init()
-    })
-    socket.onMessage().subscribe((m: ChatMessage) => {
-      dispatch({ type: ADD_MESSAGE, payload: { message: m, id: m.chat } })
+      setSocket(socket.init())
+      dispatch({ type: SET_CONNECTED, payload: { conencted: true }})
     })
   }
 
@@ -79,7 +80,14 @@ const ConsumerApp: React.FC = () => {
     const _email = await AsyncStorage.getItem('RAVEN-TOKEN-EMAIL')
     if(_token !== null) { setToken(_token) }
     if(_email !== null) { setEmail(_email) }
-    if(_user !== null) { dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } }); }
+    if(_user !== null) { 
+      // await AsyncStorage.removeItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
+      // await AsyncStorage.removeItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
+      dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } }); 
+      const _chats = await AsyncStorage.getItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
+      const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
+      dispatch({ type: SET_CHAT_TIMELINE, payload: { chats: _chats ? JSON.parse(_chats) : {}, timeline: _timeline ? JSON.parse(_timeline) : []  } })
+    }
   }
 
   const _autoLogin = async () => {
@@ -105,7 +113,6 @@ const ConsumerApp: React.FC = () => {
 
   const ChatsStack: NavigationContainer = createStackNavigator({
     Chats: Chats,
-    ChatView: ChatView
   }, { headerMode: 'none' });
   const ContactsStack: NavigationContainer = createStackNavigator({
     Contacts: Contacts
@@ -121,7 +128,7 @@ const ConsumerApp: React.FC = () => {
     PictureViewer: PictureViewer
   }, { headerMode: 'none' })
   const CameraStack: NavigationContainer = createStackNavigator({
-    Camera: Camera
+    Camera: CameraView
   }, { headerMode: 'none' })
   const TabNav: NavigationContainer = createBottomTabNavigator({
     Contacts: ContactsStack,
@@ -131,7 +138,7 @@ const ConsumerApp: React.FC = () => {
   }, {
     initialRouteName: 'Chats',
     tabBarOptions: {
-      style: { borderTopWidth: 0, shadowColor: '#DCDEF4', shadowOpacity: 0.3, shadowOffset: { width: 0, height: -5 }, shadowRadius: 10, height: 50 },
+      style: { borderTopWidth: 0.2, borderTopColor: '#AAAAAA' },
       activeTintColor: '#36C899',
       labelStyle: { fontWeight: '600', top: 0 }
     },
@@ -169,7 +176,8 @@ const ConsumerApp: React.FC = () => {
 
   const AppStack: NavigationContainer = createStackNavigator({
     App: AppContainer,
-    Login: LoginContainer 
+    Login: LoginContainer,
+    ChatView: ChatView 
   }, {
     headerMode: 'none',
     initialRouteName: user ? 'App' : 'Login',

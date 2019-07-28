@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useContext } from 'react'
-import { StyleSheet, View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions, AsyncStorage } from 'react-native'
 import AppHeader from '../components/AppHeader';
 import { SearchBar } from 'react-native-elements';
 import ChatContainer from '../components/ChatContainer';
@@ -7,19 +7,42 @@ import { NavigationContainerProps } from 'react-navigation';
 import { SocketContext } from '../services/ServiceContext';
 import { ChatMessage } from '../types';
 import { useSelector, useDispatch, useStore } from 'react-redux'
+import { ADD_MESSAGE } from '../redux/actionTypes'
 
 const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
   const socket = useContext(SocketContext)
   const chats = useSelector(state => state.chats)
+  const timeline = useSelector(state => state.timeline)
   const user = useSelector(state => state.user)
+  const connected = useSelector(state => state.connected)
   const dispatch = useDispatch()
+  const [update, setUpdate] = useState(false)
 
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
   const [roundDelta, setRoundDelta] = useState(1) // state for controlling border radius delta
   const [opacityDelta, setOpacityDelta] = useState(1) // state for controllling search bar opacity
 
   const ref = useRef(null) // ScrollView ref
+
+  useEffect(() => {
+    if(connected) {
+      _subscribeToEvents()
+    }
+  }, [connected])
+
+  const _subscribeToEvents = () => {
+    socket.onMessage().subscribe(async (m: ChatMessage) => {
+      m.time = Date.now()
+      dispatch({ type: ADD_MESSAGE, payload: { message: m, id: m.chat }})
+    })
+  }
+
+  useEffect(() => {
+    setUpdate(!update)
+    AsyncStorage.setItem('RAVEN-CHATS-' + user.email.toUpperCase(), JSON.stringify(chats))
+    AsyncStorage.setItem('RAVEN-TIMELINE-' + user.email.toUpperCase(), JSON.stringify(timeline))
+  }, [chats])
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => { // linear functions generate a coefficient from 0 to 1 according to scrolled distance
     const roundDelta = ((-1/55) * event.nativeEvent.contentOffset.y) + 1 > 0 ? ((-1/55) * event.nativeEvent.contentOffset.y) + 1 : 0 // linear function to set border roundness
@@ -56,10 +79,10 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
           inputContainerStyle={{ backgroundColor: '#F5F4FA', alignSelf: 'center', borderRadius: 10, marginBottom: 10, width: '95%' }}
           leftIconContainerStyle={{ opacity: 1 * opacityDelta }}
         />
-        {Object.keys(chats).map(key => {
-          if(chats[key].messages.length > 0) {
-            return (<View style={{ width: '100%', alignItems: 'center' }} key={key}>
-              <ChatContainer user={chats[key].user} messages={chats[key].messages} key={key} navigation={navigation} id={parseInt(key)}/>
+        {timeline.map((id, index) => {
+          if(chats[id].messages.length > 0) {
+            return (<View style={{ width: '100%', alignItems: 'center' }} key={index}>
+              <ChatContainer user={chats[id].user} messages={chats[id].messages} key={index} navigation={navigation} id={chats[id].id ? chats[id].id : chats[id].user.email}/>
               <View style={{ width: '95%', height: 1, backgroundColor: '#EEEEEE', marginTop: 5, marginBottom: 5 }}/>  
             </View>)
           }

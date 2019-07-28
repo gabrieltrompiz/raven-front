@@ -1,4 +1,4 @@
-import { SET_USER, DELETE_USER, ADD_MESSAGE } from './actionTypes'
+import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED } from './actionTypes'
 
 export const setUser = user => ({
   type: SET_USER,
@@ -17,5 +17,20 @@ export const addMessage = (message, id) => ({
   payload: {
     message,
     id
+  }
+})
+
+export const setConnected = connected => ({
+  type: SET_CONNECTED,
+  payload: {
+    connected
+  }
+})
+
+export const setChatsTimeline = (chats, timeline) => ({
+  type: SET_CHATS,
+  payload: {
+    chats,
+    timeline
   }
 })

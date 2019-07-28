@@ -19,5 +19,13 @@ export interface ChatMessage {
   attachment: string,
   body: string,
   time: number,
-  chat: number
+  chat: number,
+  type: number
+}
+
+export interface ChatHeaderProps {
+  name: string, 
+  phone: string,
+  email: string,
+  navigation: NavigationScreenProp<{}, NavigationParams>
 }
