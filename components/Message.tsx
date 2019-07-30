@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { View, Text } from 'react-native';
 import { ChatMessage } from '../types';
 import { useSelector } from 'react-redux'
-import { getDate } from '../utils'
+import { getTime } from '../utils'
 
 interface Message {
   message: ChatMessage
@@ -17,7 +17,7 @@ const Message: React.FC<Message> = ({ message }) => {
       <View style={{ backgroundColor: own ? '#047DFF' : '#FFFFFF', alignSelf: own ? 'flex-end' : 'flex-start', maxWidth: '70%', borderRadius: 10, padding: 10 }}>
         <Text style={{ fontFamily: 'Lato', color: own ? 'white' : 'black', fontSize: 16 }}>{message.body}</Text>
         <View style={{ height: 10, alignSelf: 'flex-end' }}>
-          <Text style={{ fontFamily: 'Lato Light', fontSize: 12, width: '100%', textAlign: 'right' }}>{getDate(message.time)}</Text>
+          <Text style={{ fontFamily: 'Lato Light', fontSize: 12, width: '100%', textAlign: 'right', color: own ? 'white' : 'black' }}>{getTime(message.time)}</Text>
         </View>
       </View>
     </View>

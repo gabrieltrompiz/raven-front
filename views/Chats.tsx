@@ -7,7 +7,7 @@ import { NavigationContainerProps } from 'react-navigation';
 import { SocketContext } from '../services/ServiceContext';
 import { ChatMessage } from '../types';
 import { useSelector, useDispatch, useStore } from 'react-redux'
-import { ADD_MESSAGE } from '../redux/actionTypes'
+import { ADD_MESSAGE, ADDED_TO_GROUP } from '../redux/actionTypes'
 
 const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
@@ -35,6 +35,10 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
     socket.onMessage().subscribe(async (m: ChatMessage) => {
       m.time = Date.now()
       dispatch({ type: ADD_MESSAGE, payload: { message: m, id: m.chat }})
+    })
+    socket.onGroupAdd().subscribe(async (group: any) => {
+      console.log(group)
+      dispatch({ type: ADDED_TO_GROUP, payload: { group: group }})
     })
   }
 
@@ -82,7 +86,8 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
         {timeline.map((id, index) => {
           if(chats[id].messages.length > 0) {
             return (<View style={{ width: '100%', alignItems: 'center' }} key={index}>
-              <ChatContainer user={chats[id].user} messages={chats[id].messages} key={index} navigation={navigation} id={chats[id].id ? chats[id].id : chats[id].user.email}/>
+              <ChatContainer user={id.includes("@") ? chats[id].user : null} group={id.includes('@') ? null : chats[id]} messages={chats[id].messages} key={index} 
+                navigation={navigation} id={chats[id].id ? chats[id].id : chats[id].user.email}/>
               <View style={{ width: '95%', height: 1, backgroundColor: '#EEEEEE', marginTop: 5, marginBottom: 5 }}/>  
             </View>)
           }

@@ -1,4 +1,4 @@
-import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED } from './actionTypes'
+import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SEND_MESSAGE, ADDED_TO_GROUP } from './actionTypes'
 
 export const setUser = user => ({
   type: SET_USER,
@@ -32,5 +32,20 @@ export const setChatsTimeline = (chats, timeline) => ({
   payload: {
     chats,
     timeline
+  }
+})
+
+export const sendMessage = message => ({
+  type: SEND_MESSAGE,
+  payload: {
+    message,
+    to
+  }
+})
+
+export const addedToGroup = group => ({
+  type: ADDED_TO_GROUP,
+  payload: {
+    group
   }
 })

@@ -1,4 +1,4 @@
-import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE } from '../actionTypes'
+import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP } from '../actionTypes'
 import { AsyncStorage } from 'react-native'
 
 const initialState = {
@@ -80,6 +80,53 @@ export default function(state = initialState, action) {
         timeline: timeline
       }
     } 
+
+    case SEND_MESSAGE: {
+      const { message, to } = action.payload
+      const chats = Object.assign({}, state.chats)
+      let timeline = [...state.timeline]
+      if(message.type === 1) {
+        if(typeof chats[to.email] === 'undefined') {
+          chats[to.email] = {}
+          chats[to.email].messages = []
+          chats[to.email].user = to
+        }
+        chats[to.email].messages.push(message)
+        if(timeline.includes(to.email) && timeline.indexOf(to.email) > 0) {
+          timeline.splice(timeline.indexOf(to.email))
+          timeline.unshift(to.email)
+        } else if(timeline.indexOf(to.email) === -1) {
+          timeline.unshift(to.email)
+        }
+      }
+      
+      return {
+        ...state,
+        chats: chats,
+        timeline: timeline
+      }
+    }
+
+    case ADDED_TO_GROUP: {
+      const { group } = action.payload
+      const chats = Object.assign({}, state.chats)
+      chats[group.chat.id] = {}
+      chats[group.chat.id].messages = []
+      chats[group.chat.id].user = group.creator
+      let timeline = [...state.timeline]
+      if(timeline.includes(group.chat.id) && timeline.indexOf(group.chat.id) > 0) {
+        timeline.splice(timeline.indexOf(group.chat.id))
+        timeline.unshift(group.chat.id)
+      } else if(timeline.indexOf(group.chat.id) === -1) {
+        timeline.unshift(group.chat.id)
+      }
+      return {
+        ...state,
+        chats: chats,
+        timeline: timeline
+      }
+    }
+
     default: return state;
   }
 }

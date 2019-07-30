@@ -1,13 +1,15 @@
 import { NavigationScreenProp, NavigationParams } from "react-navigation";
 
 export interface ChatProps {
-  user: User,
+  user?: User,
+  group?: any,
   messages: ChatMessage [],
   navigation: NavigationScreenProp<{}, NavigationParams>,
   id: number
 }
 
 export interface User {
+  id: number,
   name: string,
   phone: string,
   email: string
@@ -28,4 +30,11 @@ export interface ChatHeaderProps {
   phone: string,
   email: string,
   navigation: NavigationScreenProp<{}, NavigationParams>
+}
+
+export interface SocketMessage {
+  to: number,
+  attachment?: string,
+  body: string,
+  type: number
 }

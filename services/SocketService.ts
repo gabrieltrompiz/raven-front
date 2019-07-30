@@ -1,4 +1,4 @@
-import { User } from './../types';
+import { User, SocketMessage } from './../types';
 import io from 'socket.io-client';
 import { fromEvent, Observable, Subscriber } from 'rxjs'
 import { ChatMessage } from '../types'
@@ -12,8 +12,12 @@ export class SocketService {
     return this;
   }
 
-  public sendMessage (message: ChatMessage): void {
+  public sendMessage (message: SocketMessage): void {
     this.socket.emit('message', message);
+  }
+
+  public createGroup (group: any): void {
+    this.socket.emit('create group', group)
   }
 
   public onRelog (): Observable<string> {
@@ -22,6 +26,10 @@ export class SocketService {
 
   public onMessage (): Observable<ChatMessage> {
     return fromEvent(this.socket, 'message');
+  }
+
+  public onGroupAdd (): Observable<any> {
+    return fromEvent(this.socket, 'added to group')
   }
 
   public disconnect (): void {
