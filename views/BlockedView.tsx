@@ -7,7 +7,7 @@ import { ChatMessage } from '../types';
 import ContactContainer from '../components/ContactContainer';
 
 const BlockedView: React.FC<NavigationContainerProps> = ({ navigation }) => {
-  const users = [{name: 'Soy el yo', phone: '04160005000', email: 'luis26-99@hotmail.com'}, {name: 'Soy el tu', phone: '04160005000', email: 'luis2asdas6-99@hotmail.com'}]
+  const users = [{name: 'Luis Petrella', phone: '04160005000', email: 'luis26-99@hotmail.com'}, {name: 'Wisam Monzabat', phone: '04160005000', email: 'luis2asdas6-99@hotmail.com'}]
   const blocked = [false, true];
   return (
     <View style={{ flex: 1 }}>

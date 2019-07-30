@@ -1,4 +1,5 @@
-import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP, SET_BACKGROUND } from '../actionTypes'
+import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP, SET_BACKGROUND,
+   SET_STATUS, SET_STATUS_LIST } from '../actionTypes'
 import { AsyncStorage } from 'react-native'
 
 const initialState = {
@@ -129,10 +130,29 @@ export default function(state = initialState, action) {
     }
 
     case SET_BACKGROUND: {
+      console.log(action.payload)
       const { background } = action.payload
       return {
         ...state, 
         background: background
+      }
+    }
+
+    case SET_STATUS: {
+      console.log(action.payload)
+      const { status } = action.payload;
+      return {
+        ...state,
+        status: status
+      }
+    }
+
+    case SET_STATUS_LIST: {
+      console.log(action.payload)
+      const { statusList } = action.payload;
+      return {
+        ...state,
+        statusList: statusList
       }
     }
 

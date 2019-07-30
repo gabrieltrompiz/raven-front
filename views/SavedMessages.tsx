@@ -11,9 +11,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const SavedMessages: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const messages: ChatMessage[] = [
     { id: 1, user: {name: 'Soy el yo', phone: '04160005000', email: 'luis26-99@hotmail.com'}, attachment: '', body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus quasi odio soluta, velit quisquam culpa autem aperiam ipsam eaque assumenda modi voluptate, nulla nobis molestias cumque dignissimos laborum sed neque.', time: Date.now(), chat: 1, type: 1},
-    { id: 2, user: {name: 'Soy el yo', phone: '04160005000', email: 'elyo@yo.yo'}, attachment: '', body: 'xd3 culo webazo', time: Date.now(), chat: 1, type: 1},
-    { id: 3, user: {name: 'Soy el yo', phone: '04160005000', email: 'elyo@yo.yo'}, attachment: '', body: 'xd3 culo webazo', time: Date.now(), chat: 1, type: 1},
-    { id: 4, user: {name: 'Soy el yo', phone: '04160005000', email: 'elyo@yo.yo'}, attachment: '', body: 'xd3 culo webazo', time: new Date('July 28, 2018 03:24:00').getTime(), chat: 1, type: 1}
+    { id: 2, user: {name: 'Soy el yo', phone: '04160005000', email: 'elyo@yo.yo'}, attachment: '', body: 'Ola', time: Date.now(), chat: 1, type: 1},
+    { id: 3, user: {name: 'Soy el yo', phone: '04160005000', email: 'elyo@yo.yo'}, attachment: '', body: 'Soy yo', time: Date.now(), chat: 1, type: 1},
+    { id: 4, user: {name: 'Soy el yo', phone: '04160005000', email: 'elyo@yo.yo'}, attachment: '', body: 'Lorem ipsum dolor sit amet consectetur adipisicing Lorem ipsum dolor sit amet consectetur adipisicing', time: new Date('July 28, 2018 03:24:00').getTime(), chat: 1, type: 1}
   ];
   return (
     <View style={{ flex: 1, backgroundColor: '#F8F9FB' }}>

@@ -56,3 +56,31 @@ export const setBackground = color => ({
     color
   }
 })
+
+export const changeName = name => ({
+  type: CHANGE_NAME,
+  payload: {
+    name
+  }
+})
+
+export const changeUsername = username => ({
+  type: CHANGE_USERNAME,
+  payload: {
+    username
+  }
+})
+
+export const setStatus = status => ({
+  type: SET_STATUS,
+  payload: {
+    status
+  }
+})
+
+export const setStatusList = statusList => ({
+  type: SET_STATUS_LIST,
+  payload: {
+    statusList
+  }
+})

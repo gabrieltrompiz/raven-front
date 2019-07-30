@@ -18,7 +18,7 @@ import { SocketService } from './services/SocketService';
 import * as SecureStore from 'expo-secure-store';
 import store from './redux/store'
 import { Provider, useDispatch, useSelector, connect } from 'react-redux'
-import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE } from './redux/actionTypes'
+import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE, SET_STATUS, SET_STATUS_LIST } from './redux/actionTypes'
 import { ChatMessage } from './types';
 import CameraView from './views/CameraView';
 import BlockedView from './views/BlockedView';
@@ -74,9 +74,11 @@ const ConsumerApp: React.FC = () => {
     // await AsyncStorage.removeItem('RAVEN-TOKEN')
     // await AsyncStorage.removeItem('RAVEN-TOKEN-EMAIL')
     // await AsyncStorage.removeItem('RAVEN-USER')
-    const _user = await AsyncStorage.getItem('RAVEN-USER');
+    const _user = await AsyncStorage.getItem('RAVEN-USER')
     const _token = await AsyncStorage.getItem('RAVEN-TOKEN')
     const _email = await AsyncStorage.getItem('RAVEN-TOKEN-EMAIL')
+    const _currStatus = await AsyncStorage.getItem('RAVEN-USER-STATUS')
+    const _statusList = await AsyncStorage.getItem('RAVEN-USER-STATUS-LIST')
     if(_token !== null) { setToken(_token) }
     if(_email !== null) { setEmail(_email) }
     if(_user !== null) { 
@@ -86,7 +88,10 @@ const ConsumerApp: React.FC = () => {
       const _chats = await AsyncStorage.getItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
       const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
       dispatch({ type: SET_CHAT_TIMELINE, payload: { chats: _chats ? JSON.parse(_chats) : {}, timeline: _timeline ? JSON.parse(_timeline) : []  } })
+      if(_currStatus !== null) { dispatch({ type: SET_STATUS, payload: { _currStatus } }) }
+      if(_statusList !== null) { dispatch({ type: SET_STATUS_LIST, payload: { _statusList } }) }
     }
+    
   }
 
   const _autoLogin = async () => {

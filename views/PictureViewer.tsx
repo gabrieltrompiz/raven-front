@@ -13,7 +13,7 @@ const PictureViewer: React.FC<NavigationContainerProps> = ({ navigation }) => {
         onPress={() => navigation.goBack()} title='Profile' buttonStyle={{ backgroundColor: 'transparent', width: 100, marginTop: 5, marginLeft: -10 }} 
         titleStyle={{ color: '#FFF', fontFamily: 'Lato Bold' }} containerStyle={{ width: 100 }} style={{ width: 100 }} />}
         rightComponent={<Button icon={{ name: 'chevron-right', color: '#FFF' }} iconRight
-        onPress={() => console.log('cambiate pofabo')} title='Change' buttonStyle={{ backgroundColor: 'transparent', width: 100, marginTop: 5, marginLeft: 10 }} 
+        onPress={() => console.log('pending change')} title='Change' buttonStyle={{ backgroundColor: 'transparent', width: 100, marginTop: 5, marginLeft: 10 }} 
         titleStyle={{ color: '#FFF', fontFamily: 'Lato Bold' }} containerStyle={{ width: 100 }} style={{ width: 100 }} />}/>
       
       <View style={{ width: '100%', height: '100%' }}>

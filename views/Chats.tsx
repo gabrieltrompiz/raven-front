@@ -17,10 +17,6 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const user = useSelector(state => state.user)
   const connected = useSelector(state => state.connected)
   const statu = useSelector(state => state);
-  const background = useSelector(state => {
-    console.log(state.background);
-    return state.background;
-  })
   const dispatch = useDispatch()
   const [update, setUpdate] = useState(false)
 

@@ -49,7 +49,7 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
         }}/>
         <View style={{ backgroundColor: 'transparent', width: '65%', marginBottom: '4%' }}>
           <Text style={{ fontFamily: 'Lato Bold', padding: 0, fontSize: 22 }} >{user.name}</Text>
-          <Text style={{ fontFamily: 'Lato Light', paddingTop: 2, fontSize: 13 }} >Raven has a little green bird isn't it cute {/* TODO: store.status (status isn't stored yet) */}</Text>
+          <Text style={{ fontFamily: 'Lato Light', paddingTop: 2, fontSize: 13 }} >Available</Text>
         </View>
         <Icon name='chevron-right' color='#36C899' size={40} iconStyle={{ right: 0 }} />
       </TouchableOpacity>
@@ -65,7 +65,7 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
           colors={['#060654', '#020235']} style={{ width: 38, height: 38, borderRadius: 12,
           alignItems: 'center', justifyContent: 'center' }} start={[1, 1]}><Icon name='weather-night' color='#FFF' size={30} 
           iconStyle={{ marginRight: 5, marginLeft: 5, paddingTop: 5 }} /></LinearGradient>} 
-        onPress={() => console.log('trompiz el dark mode pls')} />
+        onPress={() => console.log('toggle dark mode')} />
 
       <Button title="Background Color" containerStyle={{ width: '90%', marginBottom: 50 }} buttonStyle={{ backgroundColor: '#FFF', borderRadius: 16, height: 48,
         justifyContent: 'flex-start' }} titleStyle={{ fontFamily: 'Lato', color: 'black', fontSize: 18, paddingLeft: 10 }} icon={<LinearGradient 

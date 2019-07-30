@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
 import { Image, Button } from 'react-native-elements';
 import { NavigationContainerProps } from 'react-navigation';
 import AppHeader from '../components/AppHeader';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ProfileItem from '../components/ProfileItem';
 import ModalField from './ModalField';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LoadingView from './LoadingView';
+import { SET_USER } from '../redux/actionTypes'
 
 const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const user = useSelector(store => store.user);
@@ -17,6 +18,7 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const [name, setName] = useState(user.name);
   const [username, setUsername] = useState(user.username);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const setValues = (field: string, value?: string) => {
     setField(field);
@@ -28,16 +30,21 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
     setModal(false);
     
     if(value) {
+      let _user = user;
       setLoading(true);
       switch(field) {
         case 'Name':
-          //await
+          _user.name = value;
+          dispatch({ type: SET_USER, payload: { user: _user }})
           setName(value);
+          await AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user));
           break;
         
         case 'Username':
-          //await
-          setUsername(value);
+          _user.username = value;
+          dispatch({ type: SET_USER, payload: { user: _user }})
+          setName(value);
+          await AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user));
           break;
 
         default:
@@ -81,9 +88,9 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
         />
       </TouchableOpacity>
       <ScrollView>
-        <ProfileItem label="Username" value={username} iconName="account-circle" call={setValues} />
+        <ProfileItem label="Username" value={user.username} iconName="account-circle" call={setValues} />
         <View style={{ backgroundColor: '#E0E0E0', height: 1, width: '100%' }}></View>
-        <ProfileItem label="Name" value={name} iconName="account-circle" call={setValues} />
+        <ProfileItem label="Name" value={user.name} iconName="account-circle" call={setValues} />
         <View style={{ backgroundColor: '#E0E0E0', height: 1, width: '100%' }}></View>
         <ProfileItem label="Email" value={user.email} iconName="email" changeView={changeView}/>
         <View style={{ backgroundColor: '#E0E0E0', height: 1, width: '100%' }}></View>
