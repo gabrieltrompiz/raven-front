@@ -9,10 +9,13 @@ const PictureViewer: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000', alignItems: 'center' }}>
-      <AppHeader title='Profile Picture' color='#000' fontColor='#FFF' shadow leftComponent={<Button buttonStyle={{ borderRadius: 100, backgroundColor: 'transparent' }} 
-        containerStyle={{ borderRadius: 100 }} icon={<Icon name='arrow-back' color='#FFF' size={30} iconStyle={{ paddingTop: 6 }} />} onPress={() => navigation.goBack()} />} 
-        rightComponent={<Button buttonStyle={{ borderRadius: 100, backgroundColor: 'transparent' }} containerStyle={{ borderRadius: 100 }} 
-        icon={<Icon name='arrow-forward' /* cambiar el icon a edit vos sabei */ color='#FFF' size={30} iconStyle={{ paddingTop: 6 }} />} onPress={() => console.log('aja modificate mardita abri el File explorer')} />}/>
+      <AppHeader title='Profile Photo' color='#000' fontColor='#FFF' shadow leftComponent={<Button icon={{ name: 'chevron-left', color: '#FFF' }}
+        onPress={() => navigation.goBack()} title='Profile' buttonStyle={{ backgroundColor: 'transparent', width: 100, marginTop: 5, marginLeft: -10 }} 
+        titleStyle={{ color: '#FFF', fontFamily: 'Lato Bold' }} containerStyle={{ width: 100 }} style={{ width: 100 }} />}
+        rightComponent={<Button icon={{ name: 'chevron-right', color: '#FFF' }} iconRight
+        onPress={() => console.log('cambiate pofabo')} title='Change' buttonStyle={{ backgroundColor: 'transparent', width: 100, marginTop: 5, marginLeft: 10 }} 
+        titleStyle={{ color: '#FFF', fontFamily: 'Lato Bold' }} containerStyle={{ width: 100 }} style={{ width: 100 }} />}/>
+      
       <View style={{ width: '100%', height: '100%' }}>
         <Image
           source={require('../assets/icon.png')}

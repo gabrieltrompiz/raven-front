@@ -1,4 +1,4 @@
-import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SEND_MESSAGE, ADDED_TO_GROUP } from './actionTypes'
+import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SEND_MESSAGE, ADDED_TO_GROUP, SET_BACKGROUND } from './actionTypes'
 
 export const setUser = user => ({
   type: SET_USER,
@@ -47,5 +47,12 @@ export const addedToGroup = group => ({
   type: ADDED_TO_GROUP,
   payload: {
     group
+  }
+})
+
+export const setBackground = color => ({
+  type: SET_BACKGROUND,
+  payload: {
+    color
   }
 })

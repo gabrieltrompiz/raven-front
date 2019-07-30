@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform } from 'react-native';
 import { ChatProps } from '../types'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getTime } from '../utils'
@@ -31,8 +31,7 @@ const ChatContainer: React.FC<ChatProps> = ({ user, group, messages, navigation 
 const styles = StyleSheet.create({
   name: {
     fontSize: 18,
-    fontFamily: 'Helvetica Neue',
-    fontWeight: '600',
+    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Lato Light',
     paddingBottom: 2
   },
   message: {

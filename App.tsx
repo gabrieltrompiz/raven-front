@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, AsyncStorage } from 'react-native';
+import { Image, AsyncStorage, StatusBar, Platform } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
@@ -21,9 +21,8 @@ import { Provider, useDispatch, useSelector, connect } from 'react-redux'
 import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE } from './redux/actionTypes'
 import { ChatMessage } from './types';
 import CameraView from './views/CameraView';
-import AccountSettings from './views/AccountSettings';
-import ChatSettings from './views/ChatSettings';
-import NotificationSettings from './views/NotificationSettings';
+import BlockedView from './views/BlockedView';
+import BackgroundPick from './views/BackgroundPick';
 import SavedMessages from './views/SavedMessages';
 import Profile from './views/Profile';
 import StatusView from './views/StatusView';
@@ -120,9 +119,8 @@ const ConsumerApp: React.FC = () => {
   const SettingsStack: NavigationContainer = createStackNavigator({
     Settings: Settings,
     Profile: Profile,
-    AccountSettings: AccountSettings,
-    ChatSettings: ChatSettings,
-    NotificationSettings: NotificationSettings,
+    BackgroundPick: BackgroundPick,
+    BlockedView: BlockedView,
     SavedMessages: SavedMessages,
     StatusView: StatusView,
     PictureViewer: PictureViewer
@@ -156,9 +154,15 @@ const ConsumerApp: React.FC = () => {
           default: break;
         }
         return icon;
-      }
+      }, tabBarVisible: getVisible(navigation)
     })
   })
+
+  const getVisible = ( navigation ) => {
+    const route = navigation.state.routes[navigation.state.index].routeName;
+    //Lo puse así pa que le agreguei más rutas if u want
+    return (route !== 'PictureViewer');
+  }
 
   const AppContainer: NavigationContainer = createAppContainer(TabNav)
 
@@ -197,6 +201,7 @@ const ConsumerApp: React.FC = () => {
   else {
     return (
       <SocketContext.Provider value={socket}>
+        {Platform.OS === 'android' && <StatusBar barStyle='dark-content'/>}
         <MainApp style={{ backgroundColor: 'transparent' }} screenProps={{ token: token, email: email }} />
       </SocketContext.Provider>
     );

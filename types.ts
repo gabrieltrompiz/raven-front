@@ -38,3 +38,10 @@ export interface SocketMessage {
   body: string,
   type: number
 }
+
+export interface ContactProps {
+  user: User,
+  status: string,
+  toggle?: boolean,
+  action?: Function
+}

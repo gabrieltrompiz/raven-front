@@ -20,6 +20,7 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const chats = useSelector(state => state.chats)
   const connected = useSelector(state => state.connected)
   const logged = useSelector(state => state.user)
+  const background = useSelector(state => state.background);
   const dispatch = useDispatch()
   const user: User = navigation.getParam('user', {})
   const messages: ChatMessage[]  = navigation.getParam('messages', [])
@@ -50,7 +51,7 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
   //TODO: SET CHAT BACKGROUND
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#63BDCF' }} enabled behavior='padding' keyboardVerticalOffset={-20}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: background }} enabled behavior='padding' keyboardVerticalOffset={-20}>
       <ChatHeader name={user.name} email={user.email} phone={user.phone} navigation={navigation} />
       <ScrollView style={{ paddingTop: 5 }} ref={ref}>
         {messages.map((message, i) => { 

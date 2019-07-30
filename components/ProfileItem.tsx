@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Icon } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface ProfileItemProps {
   label: string,
@@ -14,7 +14,7 @@ const ProfileItem: React.FC<ProfileItemProps> = ({ label, value, iconName, itemH
   return(
     <TouchableOpacity style={{ flexDirection: 'row', height: itemHeight ? itemHeight: 75 }} onPress={() => call ? call(label, value): changeView(label)}>
       <View style={{ width: '15%', height: '100%', backgroundColor: 'transparent' }}>
-        <Icon name={iconName} color='#36C899' size={30} iconStyle={{ marginTop: 8 }} />
+        <Icon name={iconName} color='#36C899' size={30} style={{ marginTop: 10, marginLeft: 10 }} />
       </View>
       
       <View style={{ width: '65%', height: '100%', backgroundColor: 'transparent' }}>

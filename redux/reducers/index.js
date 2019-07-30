@@ -1,11 +1,12 @@
-import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP } from '../actionTypes'
+import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP, SET_BACKGROUND } from '../actionTypes'
 import { AsyncStorage } from 'react-native'
 
 const initialState = {
   user: null,
   chats: {},
   connected: false,
-  timeline: []
+  timeline: [],
+  background: '#63BDCF'
 }
 
 export default function(state = initialState, action) {
@@ -124,6 +125,14 @@ export default function(state = initialState, action) {
         ...state,
         chats: chats,
         timeline: timeline
+      }
+    }
+
+    case SET_BACKGROUND: {
+      const { background } = action.payload
+      return {
+        ...state, 
+        background: background
       }
     }
 

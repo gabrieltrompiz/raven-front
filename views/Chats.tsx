@@ -16,13 +16,17 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const timeline = useSelector(state => state.timeline)
   const user = useSelector(state => state.user)
   const connected = useSelector(state => state.connected)
+  const statu = useSelector(state => state);
+  const background = useSelector(state => {
+    console.log(state.background);
+    return state.background;
+  })
   const dispatch = useDispatch()
   const [update, setUpdate] = useState(false)
 
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
   const [roundDelta, setRoundDelta] = useState(1) // state for controlling border radius delta
   const [opacityDelta, setOpacityDelta] = useState(1) // state for controllling search bar opacity
-
   const ref = useRef(null) // ScrollView ref
 
   useEffect(() => {
@@ -73,6 +77,7 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F8F9FB' }}>
       <AppHeader title='Chats' color='#FFF' shadow={scrolled}/>
+      {console.log(statu)}
       <ScrollView style={{ flex: 1 }} onScrollEndDrag={(event) => onRelease(event)} scrollEventThrottle={16} onScroll={(event) => onScroll(event)} ref={ref}>
         <View style={{ backgroundColor: '#FFF', height: Dimensions.get('window').height, width: '100%', position: 'absolute', top: -Dimensions.get('window').height, left: 0, right: 0}}></View>
         <SearchBar placeholder="Search"
