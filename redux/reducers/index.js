@@ -85,13 +85,13 @@ export default function(state = initialState, action) {
     } 
 
     case SEND_MESSAGE: {
-      const { message, to } = action.payload
+      const { message, to, user } = action.payload
       const chats = Object.assign({}, state.chats)
       let timeline = [...state.timeline]
       if(typeof chats[to] === 'undefined') {
         chats[to] = {}
         chats[to].messages = []
-        chats[to].user = state.user
+        chats[to].user = user
       }
       chats[to].messages.push(message)
       if(timeline.includes(to) && timeline.indexOf(to) > 0) {
@@ -132,29 +132,10 @@ export default function(state = initialState, action) {
     }
 
     case SET_BACKGROUND: {
-      console.log(action.payload)
       const { background } = action.payload
       return {
         ...state, 
         background: background
-      }
-    }
-
-    case SET_STATUS: {
-      console.log(action.payload)
-      const { status } = action.payload;
-      return {
-        ...state,
-        status: status
-      }
-    }
-
-    case SET_STATUS_LIST: {
-      console.log(action.payload)
-      const { statusList } = action.payload;
-      return {
-        ...state,
-        statusList: statusList
       }
     }
 

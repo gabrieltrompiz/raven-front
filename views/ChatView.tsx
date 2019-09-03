@@ -24,7 +24,7 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const dispatch = useDispatch()
   const user: User = navigation.getParam('user', null)
   const group = navigation.getParam('group', null)
-  const messages: ChatMessage[]  = navigation.getParam('messages', [])
+  const messages = chats[user ? user.email : group.id].messages
 
   const [input, setInput] = useState('')
 
@@ -45,7 +45,7 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const send = () => {
     if(input.trim() !== '' && connected) {
       socket.sendMessage({ type: user ? 1 : 2, attachment: '', body: input, to: user ? user.id : group.id })
-      dispatch({ type: SEND_MESSAGE, payload: { message: { body: input, type: user ? 1 : 2, attachment: '', user: logged, time: Date.now() }, to: user ? user.email : group.id } })
+      dispatch({ type: SEND_MESSAGE, payload: { message: { body: input, type: user ? 1 : 2, attachment: '', user: logged, time: Date.now() }, to: user ? user.email : group.id, user } })
       setInput('')
     }
   }
