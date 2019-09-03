@@ -2,7 +2,7 @@ import React from 'react'
 import { ChatHeaderProps } from '../types';
 import { Header, Button } from 'react-native-elements';
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({ name, email, phone, navigation }) => {
+const ChatHeader: React.FC<ChatHeaderProps> = ({ name, navigation }) => {
   return (
     <Header 
       backgroundColor='#FFFFFF'

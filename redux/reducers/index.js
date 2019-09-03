@@ -50,6 +50,7 @@ export default function(state = initialState, action) {
           chats[id] = {}
           chats[id].messages = []
           chats[id].user = message.user
+          chats[id].id = id
         }
         chats[id].messages.push(message)
         if(timeline.includes(id) && timeline.indexOf(id) > 0) {
@@ -87,21 +88,18 @@ export default function(state = initialState, action) {
       const { message, to } = action.payload
       const chats = Object.assign({}, state.chats)
       let timeline = [...state.timeline]
-      if(message.type === 1) {
-        if(typeof chats[to.email] === 'undefined') {
-          chats[to.email] = {}
-          chats[to.email].messages = []
-          chats[to.email].user = to
-        }
-        chats[to.email].messages.push(message)
-        if(timeline.includes(to.email) && timeline.indexOf(to.email) > 0) {
-          timeline.splice(timeline.indexOf(to.email))
-          timeline.unshift(to.email)
-        } else if(timeline.indexOf(to.email) === -1) {
-          timeline.unshift(to.email)
-        }
+      if(typeof chats[to] === 'undefined') {
+        chats[to] = {}
+        chats[to].messages = []
+        chats[to].user = state.user
       }
-      
+      chats[to].messages.push(message)
+      if(timeline.includes(to) && timeline.indexOf(to) > 0) {
+        timeline.splice(timeline.indexOf(to))
+        timeline.unshift(to)
+      } else if(timeline.indexOf(to) === -1) {
+        timeline.unshift(to)
+      }
       return {
         ...state,
         chats: chats,
@@ -112,15 +110,19 @@ export default function(state = initialState, action) {
     case ADDED_TO_GROUP: {
       const { group } = action.payload
       const chats = Object.assign({}, state.chats)
-      chats[group.chat.id] = {}
-      chats[group.chat.id].messages = []
-      chats[group.chat.id].user = group.creator
+      chats[group.id] = {}
+      chats[group.id].messages = []
+      chats[group.id].creator = group.creator
+      chats[group.id].participants = group.users
+      chats[group.id].creationTime = group.creationTime
+      chats[group.id].name = group.name
+      chats[group.id].type = group.type
       let timeline = [...state.timeline]
-      if(timeline.includes(group.chat.id) && timeline.indexOf(group.chat.id) > 0) {
-        timeline.splice(timeline.indexOf(group.chat.id))
-        timeline.unshift(group.chat.id)
-      } else if(timeline.indexOf(group.chat.id) === -1) {
-        timeline.unshift(group.chat.id)
+      if(timeline.includes(group.id) && timeline.indexOf(group.id) > 0) {
+        timeline.splice(timeline.indexOf(group.id))
+        timeline.unshift(group.id)
+      } else if(timeline.indexOf(group.id) === -1) {
+        timeline.unshift(group.id)
       }
       return {
         ...state,

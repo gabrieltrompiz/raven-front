@@ -11,6 +11,7 @@ const BackgroundPick: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const setWallpaper = color => {
     console.log(color)
   }
+  
   return (
     <View style={{ flex: 1 }}>
       <AppHeader title='Backgrounds' color='#FFF' shadow leftComponent={<Button icon={{ name: 'chevron-left', color: '#36C899' }} title=''

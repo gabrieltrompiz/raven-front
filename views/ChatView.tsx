@@ -22,7 +22,8 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const logged = useSelector(state => state.user)
   const background = useSelector(state => state.background);
   const dispatch = useDispatch()
-  const user: User = navigation.getParam('user', {})
+  const user: User = navigation.getParam('user', null)
+  const group = navigation.getParam('group', null)
   const messages: ChatMessage[]  = navigation.getParam('messages', [])
 
   const [input, setInput] = useState('')
@@ -43,34 +44,34 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
   const send = () => {
     if(input.trim() !== '' && connected) {
-      socket.sendMessage({ type: 1, attachment: '', body: input, to: user.id })
-      dispatch({ type: SEND_MESSAGE, payload: { message: { body: input, type: 1, attachment: '', user: logged, time: Date.now() }, to: user } })
+      socket.sendMessage({ type: user ? 1 : 2, attachment: '', body: input, to: user ? user.id : group.id })
+      dispatch({ type: SEND_MESSAGE, payload: { message: { body: input, type: user ? 1 : 2, attachment: '', user: logged, time: Date.now() }, to: user ? user.email : group.id } })
       setInput('')
     }
   }
 
   //TODO: SET CHAT BACKGROUND
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: background }} enabled behavior='padding' keyboardVerticalOffset={-20}>
-      <ChatHeader name={user.name} email={user.email} phone={user.phone} navigation={navigation} />
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#63BDCF' }} enabled behavior='padding' keyboardVerticalOffset={-20}>
+      <ChatHeader name={user ? user.name : group.name} navigation={navigation} />
       <ScrollView style={{ paddingTop: 5 }} ref={ref}>
         {messages.map((message, i) => { 
           if(i == 0 || diffDays(new Date(messages[i].time), new Date(messages[i - 1].time)) > 0) {
             return (
               <View key={i}>
                 <Label time={message.time} />
-                <Message message={message} />
+                <Message message={message} group={user === null} />
               </View>
             )
           }
           else if(i === messages.length - 1) {
             return (
               <View key={i} style={{ marginBottom: 10 }}>
-                <Message message={message} />
+                <Message message={message} group={user === null}/>
               </View>
             )
           }
-          return <Message message={message} key={i} /> 
+          return <Message message={message} group={user === null} key={i} /> 
         })}
       </ScrollView>
       <View style={{ minHeight: 75, width: '100%', backgroundColor: '#F5F5F5', borderTopColor: '#AAAAAA', borderTopWidth: 0.4, justifyContent: 'space-around', 

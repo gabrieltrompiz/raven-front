@@ -19,7 +19,7 @@ const ContactContainer: React.FC<ContactProps> = ({ user, status, toggle, action
           <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: '#DDDDDD', padding: 20, marginTop: 3, marginLeft: 10, marginRight: 10 }} />
           <View>
             <Text style={styles.name}>{user.name}</Text>
-            <Text style={styles.message} numberOfLines={2}>{status}</Text>
+            <Text style={styles.message}>{status}</Text>
           </View>
         </View>
         <View style={{ justifyContent: 'space-around', alignContent: 'space-around', height: 60, right: 0 }}>
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   message: {
     fontFamily: 'Lato',
-    maxWidth: '75%'
+    maxWidth: '100%'
   },
   time: {
     fontFamily: 'Lato Light',

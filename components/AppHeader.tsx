@@ -13,6 +13,7 @@ interface HeaderProps {
 
 const AppHeader: React.FC<HeaderProps> = ({ title, color, leftComponent, rightComponent, shadow, fontColor }) => {
   const connected = useSelector(state => state.connected)
+  const user = useSelector(state => state.user)
 
   return (
     <Header 

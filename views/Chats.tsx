@@ -5,9 +5,10 @@ import { SearchBar } from 'react-native-elements';
 import ChatContainer from '../components/ChatContainer';
 import { NavigationContainerProps } from 'react-navigation';
 import { SocketContext } from '../services/ServiceContext';
-import { ChatMessage } from '../types';
+import { ChatMessage, User } from '../types';
 import { useSelector, useDispatch, useStore } from 'react-redux'
 import { ADD_MESSAGE, ADDED_TO_GROUP } from '../redux/actionTypes'
+import { groupBy } from 'rxjs/internal/operators/groupBy';
 
 const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
@@ -18,8 +19,9 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const connected = useSelector(state => state.connected)
   const statu = useSelector(state => state);
   const dispatch = useDispatch()
-  const [update, setUpdate] = useState(false)
 
+  const [search, setSearch] = useState('')
+  const [update, setUpdate] = useState(false)
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
   const [roundDelta, setRoundDelta] = useState(1) // state for controlling border radius delta
   const [opacityDelta, setOpacityDelta] = useState(1) // state for controllling search bar opacity
@@ -32,13 +34,17 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   }, [connected])
 
   const _subscribeToEvents = () => {
-    socket.onMessage().subscribe(async (m: ChatMessage) => {
+    socket.onMessage().subscribe((m: ChatMessage) => {
       m.time = Date.now()
-      dispatch({ type: ADD_MESSAGE, payload: { message: m, id: m.chat }})
+      dispatch({ type: ADD_MESSAGE, payload: { message: m, id: m.to }})
     })
-    socket.onGroupAdd().subscribe(async (group: any) => {
-      console.log(group)
+    socket.onGroupAdd().subscribe((group: any) => {
+      group.creationTime = Date.now()
       dispatch({ type: ADDED_TO_GROUP, payload: { group: group }})
+    })
+    socket.onChannelAdd().subscribe((channel: any) => {
+      channel.creationTime = Date.now()
+      dispatch({ type: ADDED_TO_GROUP, payload: { group: channel }})
     })
   }
 
@@ -82,12 +88,13 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
           inputStyle={{ backgroundColor: '#F5F4FA', opacity: 1 * opacityDelta, minHeight: 0 }}
           inputContainerStyle={{ backgroundColor: '#F5F4FA', alignSelf: 'center', borderRadius: 10, marginBottom: 10, width: '95%' }}
           leftIconContainerStyle={{ opacity: 1 * opacityDelta }}
+          onChange={(event) => setSearch(event.nativeEvent.text)}
         />
         {timeline.map((id, index) => {
-          if(chats[id].messages.length > 0) {
+          if(chats[id].messages.length > 0 || chats[id].type !== 1) {
             return (<View style={{ width: '100%', alignItems: 'center' }} key={index}>
-              <ChatContainer user={id.includes("@") ? chats[id].user : null} group={id.includes('@') ? null : chats[id]} messages={chats[id].messages} key={index} 
-                navigation={navigation} id={chats[id].id ? chats[id].id : chats[id].user.email}/>
+              <ChatContainer user={id.toString().includes("@") ? chats[id].user : null} messages={chats[id].messages} key={index} navigation={navigation} id={chats[id].type !== 1 ? chats[id].id : chats[id].user.email}
+                group={id.toString().includes('@') ? null : { name: chats[id].name, participants: chats[id].participants, id: id, creator: chats[id].creator, creationTime: chats[id].creationTime }}/>
               <View style={{ width: '95%', height: 1, backgroundColor: '#EEEEEE', marginTop: 5, marginBottom: 5 }}/>  
             </View>)
           }
