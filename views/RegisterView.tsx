@@ -7,7 +7,7 @@ import LoadingView from './LoadingView'
 import { NavigationContainerProps } from 'react-navigation';
 import * as SecureStore from 'expo-secure-store'
 import { useDispatch } from 'react-redux'
-import { SET_USER } from '../redux/actionTypes'
+import { SET_USER, SET_STATUS, SET_STATUS_LIST } from '../redux/actionTypes'
 
 const RegisterView: React.FC<NavigationContainerProps> = ({ navigation, screenProps }) => {
   const dispatch = useDispatch()
@@ -50,13 +50,15 @@ const RegisterView: React.FC<NavigationContainerProps> = ({ navigation, screenPr
         console.log(response)
         if(response.status === 200) {
           setLoading(false)
-          const user = response.data.user
+          const user = response.user;
           await AsyncStorage.removeItem('RAVEN-TOKEN')
           await AsyncStorage.removeItem('RAVEN-TOKEN-EMAIL')
           await AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user))
           await SecureStore.setItemAsync('RAVEN-PWD', password, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY })
-          navigation.navigate('App')
           dispatch({ type: SET_USER, payload: { user: user } })
+          dispatch({ type: SET_STATUS, payload: { status: 'Available' } })
+          dispatch({ type: SET_STATUS_LIST, payload: { statusList: [] } })
+          navigation.navigate('App')
         }
         else {
           setLoading(false)

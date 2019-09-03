@@ -73,13 +73,12 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#F8F9FB' }}>
       <AppHeader title='Chats' color='#FFF' shadow={scrolled}/>
-      {console.log(statu)}
       <ScrollView style={{ flex: 1 }} onScrollEndDrag={(event) => onRelease(event)} scrollEventThrottle={16} onScroll={(event) => onScroll(event)} ref={ref}>
         <View style={{ backgroundColor: '#FFF', height: Dimensions.get('window').height, width: '100%', position: 'absolute', top: -Dimensions.get('window').height, left: 0, right: 0}}></View>
         <SearchBar placeholder="Search"
           containerStyle={{ backgroundColor: 'white', borderTopWidth: 0, borderBottomWidth: 0, shadowColor: '#DCDEF4', shadowOffset: { height: 10, width: 0 },
             shadowOpacity: !scrolled ? 0.3 : 0, shadowRadius: 5, borderBottomLeftRadius: roundDelta <= 1 ? 30  * roundDelta : 30, borderBottomRightRadius: roundDelta <= 1 ? 30  * roundDelta : 30,
-            marginBottom: 10, paddingTop: 0, minHeight: 0, width: '100%' }}
+            elevation: !scrolled ? 3 : 0, marginBottom: 10, paddingTop: 0, minHeight: 0, width: '100%' }}
           inputStyle={{ backgroundColor: '#F5F4FA', opacity: 1 * opacityDelta, minHeight: 0 }}
           inputContainerStyle={{ backgroundColor: '#F5F4FA', alignSelf: 'center', borderRadius: 10, marginBottom: 10, width: '95%' }}
           leftIconContainerStyle={{ opacity: 1 * opacityDelta }}

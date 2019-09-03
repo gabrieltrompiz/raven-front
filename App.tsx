@@ -77,19 +77,19 @@ const ConsumerApp: React.FC = () => {
     const _user = await AsyncStorage.getItem('RAVEN-USER')
     const _token = await AsyncStorage.getItem('RAVEN-TOKEN')
     const _email = await AsyncStorage.getItem('RAVEN-TOKEN-EMAIL')
-    const _currStatus = await AsyncStorage.getItem('RAVEN-USER-STATUS')
-    const _statusList = await AsyncStorage.getItem('RAVEN-USER-STATUS-LIST')
     if(_token !== null) { setToken(_token) }
     if(_email !== null) { setEmail(_email) }
     if(_user !== null) { 
       // await AsyncStorage.removeItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
       // await AsyncStorage.removeItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
-      dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } }); 
+      const _currStatus = await AsyncStorage.getItem('RAVEN-USER-STATUS-' + JSON.parse(_user).email.toUpperCase());
+      const _statusList = await AsyncStorage.getItem('RAVEN-USER-STATUS-LIST-' + JSON.parse(_user).email.toUpperCase());
+      dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } });
       const _chats = await AsyncStorage.getItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
       const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
       dispatch({ type: SET_CHAT_TIMELINE, payload: { chats: _chats ? JSON.parse(_chats) : {}, timeline: _timeline ? JSON.parse(_timeline) : []  } })
-      if(_currStatus !== null) { dispatch({ type: SET_STATUS, payload: { _currStatus } }) }
-      if(_statusList !== null) { dispatch({ type: SET_STATUS_LIST, payload: { _statusList } }) }
+      if(_currStatus !== null) { dispatch({ type: SET_STATUS, payload: { status: JSON.parse(_currStatus) } }) }
+      if(_statusList !== null) { dispatch({ type: SET_STATUS_LIST, payload: { statusList: JSON.parse(_statusList) } }) }
     }
     
   }
@@ -159,15 +159,10 @@ const ConsumerApp: React.FC = () => {
           default: break;
         }
         return icon;
-      }, tabBarVisible: getVisible(navigation)
+      }, tabBarVisible: !(excludedTabView.indexOf(navigation.state.routes[navigation.state.index].routeName) >= 0)
     })
-  })
+  }); const excludedTabView = ['PictureViewer', 'Camera'];
 
-  const getVisible = ( navigation ) => {
-    const route = navigation.state.routes[navigation.state.index].routeName;
-    //Lo puse así pa que le agreguei más rutas if u want
-    return (route !== 'PictureViewer');
-  }
 
   const AppContainer: NavigationContainer = createAppContainer(TabNav)
 

@@ -10,37 +10,56 @@ import LoadingView from './LoadingView';
 import { SET_STATUS, SET_STATUS_LIST } from '../redux/actionTypes'
 
 const StatusView: React.FC<NavigationContainerProps> = ({ navigation }) => {
+  const user = useSelector(store => store.user);
   const status = useSelector(store => store.status);
   const statusList = useSelector(store => store.statusList);
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [actualStatus, setActualStatus] = useState('This is a test I already can handle overflow pretty good');
 
+  const server = require('../config.json').server
   
-  const newStatus = async (field, status) => {
-    if(status) {
+  const newStatus = async (field, newStatus) => {
+    if(newStatus) {
       setLoading(true);
-      dispatch({ type: SET_STATUS, payload: { status: status } })
-      let statuses = statusList;
-      if(!statuses) statuses = [];
-      statuses.unshift(status);
-      dispatch({ type: SET_STATUS_LIST, payload: { statusList: statuses } })
-      await AsyncStorage.setItem('RAVEN-USER-STATUS', JSON.stringify(status));
-      await AsyncStorage.setItem('RAVEN-USER-STATUS-LIST', JSON.stringify(statuses))
-      setLoading(false);
+      // Subir el status
+      const body = {
+        statusDescription: newStatus
+      }
+      await fetch(server + 'status', { body: JSON.stringify(body), method: "POST", headers: { "Content-Type": "application/json; charset=utf-8" }, credentials: 'include' })
+        .then(res => res.json()).then(async res => {
+          dispatch({ type: SET_STATUS, payload: { status: newStatus } })
+          let statuses = statusList;
+          if(!statuses) statuses = [];
+          statuses.unshift(newStatus);
+          dispatch({ type: SET_STATUS_LIST, payload: { statusList: statuses } })
+          await AsyncStorage.setItem('RAVEN-USER-STATUS-' + user.email.toUpperCase(), JSON.stringify(newStatus));
+          await AsyncStorage.setItem('RAVEN-USER-STATUS-LIST-' + user.email.toUpperCase(), JSON.stringify(statuses))
+        })
     }
+    setLoading(false);
     setModal(false);
   }
 
-  const changeStatus = async (field, status) => {
-    if(status) {
+  const changeStatus = async (_status, key) => {
+    if(_status) {
       setLoading(true);
-      //Await verga XDDDDD No ai soke
-      setActualStatus(status);
+      const body = {
+        statusDescription: _status
+      }
+      await fetch(server + 'status', { body: JSON.stringify(body), method: "POST", headers: { "Content-Type": "application/json; charset=utf-8" }, credentials: 'include' })
+        .then(res => res.json()).then(async res => {
+          let statuses = statusList;
+          statuses.splice(key, 1);
+          statuses.unshift(_status);
 
-      setLoading(false);
+          dispatch({ type: SET_STATUS, payload: { status: _status } })
+          dispatch({ type: SET_STATUS_LIST, payload: { statusList: statuses } })
+          await AsyncStorage.setItem('RAVEN-USER-STATUS-' + user.email.toUpperCase(), JSON.stringify(_status));
+          await AsyncStorage.setItem('RAVEN-USER-STATUS-LIST-' + user.email.toUpperCase(), JSON.stringify(statuses))
+        })
     }
+    setLoading(false);
     setModal(false);
   }
 
@@ -66,7 +85,7 @@ const StatusView: React.FC<NavigationContainerProps> = ({ navigation }) => {
       <Text style={{ fontFamily: 'Lato Bold', fontSize: 15, color: '#36C899', paddingLeft: 25, paddingTop: 10, marginBottom: 15 }}>Select Status</Text>
       <ScrollView>
         {statusList && statusList.map((status, key) => 
-          <TouchableOpacity key={key} style={{ width: '100%', backgroundColor: 'transparent', height: 45 }} onPress={() => changeStatus('status', status)}>
+          <TouchableOpacity key={key} style={{ width: '100%', backgroundColor: 'transparent', height: 45 }} onPress={() => changeStatus(status, key)}>
             <Text numberOfLines={1} style={{ fontFamily: 'Lato', fontSize: 14, color: 'black', padding: 10, paddingHorizontal: 15 }}>{status}</Text>
           </TouchableOpacity>)
         }
