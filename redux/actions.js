@@ -51,10 +51,10 @@ export const addedToGroup = group => ({
   }
 })
 
-export const setBackground = color => ({
+export const setBackground = background => ({
   type: SET_BACKGROUND,
   payload: {
-    color
+    background
   }
 })
 

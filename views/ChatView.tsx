@@ -16,6 +16,7 @@ import { diffDays } from '../utils';
 import { useDispatch } from 'react-redux'
 import { SEND_MESSAGE } from '../redux/actionTypes'
 
+
 const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const chats = useSelector(state => state.chats)
   const connected = useSelector(state => state.connected)
@@ -52,7 +53,7 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
   //TODO: SET CHAT BACKGROUND
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#63BDCF' }} enabled behavior='padding' keyboardVerticalOffset={-20}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: background }} enabled behavior='padding' keyboardVerticalOffset={-20}>
       <ChatHeader name={user ? user.name : group.name} navigation={navigation} />
       <ScrollView style={{ paddingTop: 5 }} ref={ref}>
         {messages.map((message, i) => { 

@@ -18,7 +18,7 @@ import { SocketService } from './services/SocketService';
 import * as SecureStore from 'expo-secure-store';
 import store from './redux/store'
 import { Provider, useDispatch, useSelector, connect } from 'react-redux'
-import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE, SET_STATUS, SET_STATUS_LIST } from './redux/actionTypes'
+import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE, SET_STATUS, SET_STATUS_LIST, SET_BACKGROUND } from './redux/actionTypes'
 import { ChatMessage } from './types';
 import CameraView from './views/CameraView';
 import BlockedView from './views/BlockedView';
@@ -84,12 +84,14 @@ const ConsumerApp: React.FC = () => {
       // await AsyncStorage.removeItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
       const _currStatus = await AsyncStorage.getItem('RAVEN-USER-STATUS-' + JSON.parse(_user).email.toUpperCase());
       const _statusList = await AsyncStorage.getItem('RAVEN-USER-STATUS-LIST-' + JSON.parse(_user).email.toUpperCase());
+      const _background = await AsyncStorage.getItem('RAVEN-BACKGROUND')
       dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } });
       const _chats = await AsyncStorage.getItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
       const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
       dispatch({ type: SET_CHAT_TIMELINE, payload: { chats: _chats ? JSON.parse(_chats) : {}, timeline: _timeline ? JSON.parse(_timeline) : []  } })
-      if(_currStatus !== null) { dispatch({ type: SET_STATUS, payload: { status: JSON.parse(_currStatus) } }) }
-      if(_statusList !== null) { dispatch({ type: SET_STATUS_LIST, payload: { statusList: JSON.parse(_statusList) } }) }
+      if(_currStatus) { dispatch({ type: SET_STATUS, payload: { status: JSON.parse(_currStatus) } }) }
+      if(_statusList) { dispatch({ type: SET_STATUS_LIST, payload: { statusList: JSON.parse(_statusList) } }) }
+      if(_background) { dispatch({ type: SET_BACKGROUND, payload: { background: _background }}) }
     }
     
   }

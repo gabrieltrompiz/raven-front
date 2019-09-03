@@ -1,6 +1,5 @@
 import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP, SET_BACKGROUND,
    SET_STATUS, SET_STATUS_LIST } from '../actionTypes'
-import { AsyncStorage } from 'react-native'
 
 const initialState = {
   user: null,
