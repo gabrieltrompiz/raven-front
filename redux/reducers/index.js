@@ -139,6 +139,22 @@ export default function(state = initialState, action) {
       }
     }
 
+    case SET_STATUS: {
+      const { status } = action.payload;
+      return {
+        ...state,
+        status: status
+      }
+    }
+
+    case SET_STATUS_LIST: {
+      const { statusList } = action.payload;
+      return {
+        ...state,
+        statusList: statusList
+      }
+    }
+
     default: return state;
   }
 }

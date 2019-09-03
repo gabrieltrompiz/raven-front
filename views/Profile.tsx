@@ -12,6 +12,7 @@ import { SET_USER } from '../redux/actionTypes'
 
 const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const user = useSelector(store => store.user);
+  const status = useSelector(store => store.status);
   const [modal, setModal] = useState(false);
   const [field, setField] = useState('');
   const [value, setValue] = useState('');
@@ -94,7 +95,7 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
         <View style={{ backgroundColor: '#E0E0E0', height: 1, width: '100%' }}></View>
         <ProfileItem label="Email" value={user.email} iconName="email" changeView={changeView}/>
         <View style={{ backgroundColor: '#E0E0E0', height: 1, width: '100%' }}></View>
-        <ProfileItem label="Status" value="Raven has a little green bird isn't it cute" iconName="access-point" itemHeight={100} changeView={changeView} />
+        <ProfileItem label="Status" value={status ? status : "Available"} iconName="access-point" itemHeight={100} changeView={changeView} />
       </ScrollView>
     </View>
     );
