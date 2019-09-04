@@ -21,7 +21,6 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const dispatch = useDispatch()
 
   const [search, setSearch] = useState('')
-  const [update, setUpdate] = useState(false)
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
   const [roundDelta, setRoundDelta] = useState(1) // state for controlling border radius delta
   const [opacityDelta, setOpacityDelta] = useState(1) // state for controllling search bar opacity
@@ -49,7 +48,6 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   }
 
   useEffect(() => {
-    setUpdate(!update)
     AsyncStorage.setItem('RAVEN-CHATS-' + user.email.toUpperCase(), JSON.stringify(chats))
     AsyncStorage.setItem('RAVEN-TIMELINE-' + user.email.toUpperCase(), JSON.stringify(timeline))
   }, [chats])

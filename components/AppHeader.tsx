@@ -13,13 +13,12 @@ interface HeaderProps {
 
 const AppHeader: React.FC<HeaderProps> = ({ title, color, leftComponent, rightComponent, shadow, fontColor }) => {
   const connected = useSelector(state => state.connected)
-  const user = useSelector(state => state.user)
 
   return (
     <Header 
       backgroundColor={color}
       centerComponent={{ text: connected ? title : 'Connecting', style: { color: typeof fontColor === 'undefined' ? '#000': fontColor, 
-        fontFamily: connected ? 'Lato Black' : 'Lato Light', fontSize: connected ? 28 : 24 } }}
+        fontFamily: connected ? 'Lato Black' : 'Lato Light', fontSize: connected ? 24 : 20 } }}
       containerStyle={{ shadowColor: '#DCDEF4', shadowOpacity: shadow ? 0.3 : 0, shadowOffset: { height: 10, width: 0 }, shadowRadius: 5, borderBottomWidth: 0, margin: 0, zIndex: 10, elevation: shadow ? 3 : 0 }}
       leftComponent={leftComponent}
       rightComponent={rightComponent}

@@ -1,12 +1,13 @@
 import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP, SET_BACKGROUND,
-   SET_STATUS, SET_STATUS_LIST } from '../actionTypes'
+   SET_STATUS, SET_STATUS_LIST, SET_DARK } from '../actionTypes'
 
 const initialState = {
   user: null,
   chats: {},
   connected: false,
   timeline: [],
-  background: '#63BDCF'
+  background: '#63BDCF',
+  dark: false
 }
 
 export default function(state = initialState, action) {
@@ -151,6 +152,14 @@ export default function(state = initialState, action) {
       return {
         ...state,
         statusList: statusList
+      }
+    }
+
+    case SET_DARK: {
+      const { dark } = action.payload;
+      return {
+        ...state,
+        dark
       }
     }
 

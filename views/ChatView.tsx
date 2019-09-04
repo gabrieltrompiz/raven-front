@@ -25,7 +25,7 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const dispatch = useDispatch()
   const user: User = navigation.getParam('user', null)
   const group = navigation.getParam('group', null)
-  const messages = chats[user ? user.email : group.id].messages
+  const messages = chats[user ? user.email : group.id] ? chats[user ? user.email : group.id].messages : navigation.getParam('messages', [])
 
   const [input, setInput] = useState('')
 
@@ -75,7 +75,7 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
           return <Message message={message} group={user === null} key={i} /> 
         })}
       </ScrollView>
-      <View style={{ minHeight: 75, width: '100%', backgroundColor: '#F5F5F5', borderTopColor: '#AAAAAA', borderTopWidth: 0.4, justifyContent: 'space-around', 
+      <View style={{ minHeight: 75, width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderTopColor: '#AAAAAA', borderTopWidth: 0.4, justifyContent: 'space-around', 
         paddingBottom: 20, alignItems: 'center', flexDirection: 'row', paddingLeft: 5, paddingRight: 5, maxHeight: 200 }}>
         <TouchableHighlight style={{ height: 35, width: 35, borderRadius: 17.5, alignItems: 'center', justifyContent: 'center', marginLeft: 5 }}>
           <Icon name ='camera' color='#4FC77F' type='material-community' size={28} />

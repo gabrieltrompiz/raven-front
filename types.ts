@@ -27,7 +27,8 @@ export interface ChatMessage {
 
 export interface ChatHeaderProps {
   name: string, 
-  navigation: NavigationScreenProp<{}, NavigationParams>
+  navigation: NavigationScreenProp<{}, NavigationParams>,
+  preview?: boolean
 }
 
 export interface SocketMessage {

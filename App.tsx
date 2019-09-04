@@ -3,7 +3,7 @@ import { Image, AsyncStorage, StatusBar, Platform } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
-import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createAppContainer, NavigationContainer, createNavigationContainer } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chats from './views/Chats';
 import Contacts from './views/Contacts';
@@ -18,8 +18,7 @@ import { SocketService } from './services/SocketService';
 import * as SecureStore from 'expo-secure-store';
 import store from './redux/store'
 import { Provider, useDispatch, useSelector, connect } from 'react-redux'
-import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE, SET_STATUS, SET_STATUS_LIST, SET_BACKGROUND } from './redux/actionTypes'
-import { ChatMessage } from './types';
+import { SET_USER, SET_CONNECTED, SET_CHAT_TIMELINE, SET_STATUS, SET_STATUS_LIST, SET_BACKGROUND, SET_DARK } from './redux/actionTypes'
 import CameraView from './views/CameraView';
 import BlockedView from './views/BlockedView';
 import BackgroundPick from './views/BackgroundPick';
@@ -27,6 +26,7 @@ import SavedMessages from './views/SavedMessages';
 import Profile from './views/Profile';
 import StatusView from './views/StatusView';
 import PictureViewer from './views/PictureViewer';
+import PreviewWallpaper from './views/PreviewWallpaper';
 
 const ConsumerApp: React.FC = () => {
   //Dev:
@@ -85,6 +85,7 @@ const ConsumerApp: React.FC = () => {
       const _currStatus = await AsyncStorage.getItem('RAVEN-USER-STATUS-' + JSON.parse(_user).email.toUpperCase());
       const _statusList = await AsyncStorage.getItem('RAVEN-USER-STATUS-LIST-' + JSON.parse(_user).email.toUpperCase());
       const _background = await AsyncStorage.getItem('RAVEN-BACKGROUND')
+      const _dark = await AsyncStorage.getItem('RAVEN-DARK')
       dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } });
       const _chats = await AsyncStorage.getItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
       const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
@@ -92,6 +93,7 @@ const ConsumerApp: React.FC = () => {
       if(_currStatus) { dispatch({ type: SET_STATUS, payload: { status: JSON.parse(_currStatus) } }) }
       if(_statusList) { dispatch({ type: SET_STATUS_LIST, payload: { statusList: JSON.parse(_statusList) } }) }
       if(_background) { dispatch({ type: SET_BACKGROUND, payload: { background: _background }}) }
+      if(_dark) { dispatch({ type: SET_DARK, payload: { dark: _dark } }) }
     }
     
   }
@@ -120,6 +122,9 @@ const ConsumerApp: React.FC = () => {
   const ChatsStack: NavigationContainer = createStackNavigator({
     Chats: Chats,
   }, { headerMode: 'none' });
+  const PreviewStack: NavigationContainer = createStackNavigator({
+    PreviewWallpaper: PreviewWallpaper
+  }, { headerMode: 'none' })
   const ContactsStack: NavigationContainer = createStackNavigator({
     Contacts: Contacts
   }, { headerMode: 'none' })
@@ -183,7 +188,8 @@ const ConsumerApp: React.FC = () => {
   const AppStack: NavigationContainer = createStackNavigator({
     App: AppContainer,
     Login: LoginContainer,
-    ChatView: ChatView 
+    ChatView: ChatView,
+    PreviewWallpaper: PreviewStack,
   }, {
     headerMode: 'none',
     initialRouteName: user ? 'App' : 'Login',

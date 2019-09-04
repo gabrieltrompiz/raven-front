@@ -23,15 +23,13 @@ const ChatContainer: React.FC<ChatProps> = ({ user, group, messages, navigation 
             </Text>
           </View>
         </View>
-        <View style={{ justifyContent: 'space-around', alignContent: 'space-around', height: 60, right: 10 }}>
-          <Text style={styles.time}>
-            {messages.length > 0 ? getTime(messages[messages.length - 1].time) : getTime(group.creationTime)}
-          </Text>
-          <Image 
-            source={require('../assets/right-arrow.png')}
-            style={{ width: 20, height: 20, tintColor: '#36C899', alignSelf: 'flex-end', marginRight: 10 }}
-          />
-        </View>
+        <Text style={styles.time}>
+          {messages.length > 0 ? getTime(messages[messages.length - 1].time) : getTime(group.creationTime)}
+        </Text>
+        <Image 
+          source={require('../assets/right-arrow.png')}
+          style={{ width: 20, height: 20, tintColor: '#36C899', position: 'absolute', right: 10, bottom: 5 }}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -50,7 +48,9 @@ const styles = StyleSheet.create({
   },
   time: {
     fontFamily: 'Lato Light',
-    marginRight: 10
+    position: 'absolute',
+    right: 10,
+    top: 10
   }
 })
 
