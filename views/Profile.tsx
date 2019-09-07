@@ -20,6 +20,7 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const [username, setUsername] = useState(user.username);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const server = require('../config.json').server;
 
   const setValues = (field: string, value?: string) => {
     setField(field);
@@ -83,8 +84,8 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
         onPress={() => navigation.goBack()} buttonStyle={{ backgroundColor: 'transparent', width: 100, marginTop: 5 }} 
         titleStyle={{ color: '#36C899', fontFamily: 'Lato Bold' }} containerStyle={{ width: 100 }} style={{ width: 100 }} />} />
       <TouchableOpacity onPress={() => navigation.navigate('PictureViewer')}>
-        <Image 
-          source={require('../assets/icon.png')} 
+        <Image
+          source={{ uri: server + 'picture/' + user.pictureUrl }}
           style={{ width: 180, height: 180, borderRadius: 100, marginTop: 15, marginBottom: 55 }}
         />
       </TouchableOpacity>

@@ -83,6 +83,7 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
           containerStyle={{ backgroundColor: 'white', borderTopWidth: 0, borderBottomWidth: 0, shadowColor: '#DCDEF4', shadowOffset: { height: 10, width: 0 },
             shadowOpacity: !scrolled ? 0.3 : 0, shadowRadius: 5, borderBottomLeftRadius: roundDelta <= 1 ? 30  * roundDelta : 30, borderBottomRightRadius: roundDelta <= 1 ? 30  * roundDelta : 30,
             elevation: !scrolled ? 3 : 0, marginBottom: 10, paddingTop: 0, minHeight: 0, width: '100%' }}
+          value={search}
           inputStyle={{ backgroundColor: '#F5F4FA', opacity: 1 * opacityDelta, minHeight: 0 }}
           inputContainerStyle={{ backgroundColor: '#F5F4FA', alignSelf: 'center', borderRadius: 10, marginBottom: 10, width: '95%' }}
           leftIconContainerStyle={{ opacity: 1 * opacityDelta }}

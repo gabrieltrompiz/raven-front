@@ -9,10 +9,12 @@ export interface ChatProps {
 }
 
 export interface User {
+  pictureUrl: string;
   id: number,
   name: string,
-  phone: string,
-  email: string
+  username: string,
+  email: string,
+  status: string
 }
 
 export interface ChatMessage {

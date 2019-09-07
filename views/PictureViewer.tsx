@@ -1,11 +1,12 @@
-import React, { useContext } from 'react'
-import { View, Dimensions } from 'react-native'
+import React, { useContext, useState } from 'react'
+import { View, Dimensions,Image } from 'react-native'
 import { NavigationContainerProps } from 'react-navigation';
-import { Icon, Button, Image } from 'react-native-elements';
+import { Icon, Button } from 'react-native-elements';
 import AppHeader from '../components/AppHeader';
 import * as ImagePicker from 'expo-image-picker';
-import { useSelector } from 'react-redux';
-import Base64 from 'Base64';
+import { useSelector, useDispatch } from 'react-redux';
+import { SET_USER } from '../redux/actionTypes';
+import LoadingView from './LoadingView';
 
 const pickerOptions = {
   base64: true,
@@ -15,49 +16,38 @@ const pickerOptions = {
 };
 
 const PictureViewer: React.FC<NavigationContainerProps> = ({ navigation }) => {
+  const [loading, setLoading] = useState(false);
   const width = Dimensions.get('window').width;
   const user = useSelector(store => store.user);
   const server = require('../config.json').server;
 
+  const dispatch = useDispatch();
+
   const selectPicture = () => {
     ImagePicker.launchImageLibraryAsync(pickerOptions)
       .then(res => {
-        // console.log(res);
         if(!res.cancelled) {
-          changePicture(res.uri);
+          setLoading(true);
+          changePicture(res.base64);
+          setLoading(false);
         }
       }).catch(console.log);
+      setLoading(false);
   }
 
-  const changePicture = async (uri) => {
-    console.log('aqui tamo')
-    const res = await fetch(uri);
-    res.blob().then(async (blob) => {
-      console.log('el blob cachuo')
-      const file = new File([blob], 'cojondemono.png');
-      let body = new FormData();
-      body.append('avatar', file);
-      // body.append('email', user.email);
-      console.log('file y formdata cirben')
-      console.log(server + 'picture');
-      await fetch(server + 'picture', { method: 'POST', body: body, credentials: 'include', headers: { "Content-Type": "multipart/form-data" } })
-        .then(res => res.json()).then(res => {
-          console.log(res);
-        }).catch(err => {
-          console.log('no c ba a pode')
-          console.log(err);
-        });
-    })
-  }
-
-  const dataURLtoFile = (dataurl, filename) => {
-    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = Base64.btoa(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
+  const changePicture = async (base64) => {
+    const _uri = user.email + Date.now();
+    console.log(_uri);
+    const body = {
+      uri: _uri,
+      oldUri: user.pictureUrl,
+      base64: base64
     }
-    return new File([u8arr], filename, {type:mime});
-}
+    await fetch(server + 'picture', { method: 'POST', body: JSON.stringify(body), credentials: 'include', headers: { "Content-Type": "application/json; charset=utf-8" } })
+      .then(res => res.json()).then(res => {
+        dispatch({ type: SET_USER, payload: { user: { creationTime: user.creationTime, email: user.email, id: user.id, name: user.name, pictureUrl: _uri, username: user.username } } })
+      }).catch(console.log);
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000', alignItems: 'center' }}>
@@ -68,9 +58,10 @@ const PictureViewer: React.FC<NavigationContainerProps> = ({ navigation }) => {
         onPress={selectPicture} title='Change' buttonStyle={{ backgroundColor: 'transparent', width: 100, marginTop: 5, marginLeft: 10 }} 
         titleStyle={{ color: '#FFF', fontFamily: 'Lato Bold' }} containerStyle={{ width: 100 }} style={{ width: 100 }} />}/>
       
+      {loading && <LoadingView />}
       <View style={{ width: '100%', height: '100%' }}>
         <Image
-          source={require('../assets/icon.png')}
+          source={{ uri: server + 'picture/' + user.pictureUrl }}
           style={{ width: width, height: width, marginVertical: 100 }}
         />
       </View>

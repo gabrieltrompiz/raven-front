@@ -13,6 +13,7 @@ import LottieView from 'lottie-react-native';
 
 const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
+  const status = useSelector(store => store.status);
   const user = useSelector(store => store.user);
   const server = require('../config.json').server
   const dark = useSelector(state => state.dark)
@@ -60,11 +61,11 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
       {loading && <LoadingView />}
       <TouchableOpacity style={{ backgroundColor: 'transparent', marginTop: 3, width: '90%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
       onPress={() => navigation.navigate('Profile')}>
-        <Image source={require('../assets/icon.png')} 
+        <Image source={{ uri: server + 'picture/' + user.pictureUrl }} 
           style={{ width: 80, height: 80, margin: 20, marginLeft: 10, marginRight: 10, borderRadius: 40 }}/>
         <View style={{ backgroundColor: 'transparent', width: '65%', marginBottom: '4%' }}>
           <Text style={{ fontFamily: 'Lato Bold', padding: 0, fontSize: 22 }} >{user.name}</Text>
-          <Text style={{ fontFamily: 'Lato Light', paddingTop: 2, fontSize: 13 }} >Available</Text>
+          <Text style={{ fontFamily: 'Lato Light', paddingTop: 2, fontSize: 13 }} >{status ? status : 'Available'}</Text>
         </View>
         <Icon name='chevron-right' color='#36C899' size={40} iconStyle={{ right: 0 }} />
       </TouchableOpacity>

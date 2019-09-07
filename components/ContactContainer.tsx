@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ContactContainer: React.FC<ContactProps> = ({ user, status, toggle, action }) => {
   const [toggled, setToggled] = useState(toggle);
+  const server = require('../config.json').server;
 
   const toggleBlock = () => {
     setToggled(!toggled);
@@ -16,7 +17,10 @@ const ContactContainer: React.FC<ContactProps> = ({ user, status, toggle, action
       <TouchableOpacity activeOpacity={0.8} onPress={() => typeof action === 'undefined' ? toggleBlock() : action() }
         style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: '#DDDDDD', padding: 20, marginTop: 3, marginLeft: 10, marginRight: 10 }} />
+          <Image
+            source={{ uri: server + 'picture/' + user.pictureUrl }}
+            style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: '#DDDDDD', padding: 20, marginTop: 3, marginLeft: 10, marginRight: 10 }}
+          />
           <View>
             <Text style={styles.name}>{user.name}</Text>
             <Text style={styles.message}>{status}</Text>

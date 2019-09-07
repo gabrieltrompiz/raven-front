@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { Image } from 'react-native-elements';
 import { ChatProps } from '../types'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getTime } from '../utils'
@@ -7,13 +8,17 @@ import { useSelector } from 'react-redux'
 
 const ChatContainer: React.FC<ChatProps> = ({ user, group, messages, navigation }) => {
   const loggedUser = useSelector(state => state.user)
+  const server = require('../config.json').server;
 
   return (
     <View style={{ width: '100%', height: 70, backgroundColor: 'transparent' }}>
       <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.dangerouslyGetParent().navigate('ChatView', { user: user, messages: messages, navigation: navigation, group: group }) }
         style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: '#DDDDDD', padding: 20, marginLeft: 10, marginRight: 10 }} />
+          <Image
+            source={{ uri: server + 'picture/' + user.pictureUrl }}
+            style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: '#DDDDDD', padding: 20, marginLeft: 10, marginRight: 10 }}
+          />
           <View style={{ width: '65%' }}>
             <Text style={styles.name}>{user ? user.name : group.name}</Text>
             <Text style={styles.message} numberOfLines={2}>

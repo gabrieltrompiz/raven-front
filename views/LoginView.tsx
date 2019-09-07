@@ -98,7 +98,7 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
         <LinearGradient colors={['#4FC77F', '#33CA9B']} style={{ width: '80%', height: 50, marginTop: 15, borderRadius: 10, marginBottom: 10,
           alignItems: 'center', justifyContent: 'center' }} start={[0, 0]}>
           <Button containerStyle={{ backgroundColor: 'transparent', width: '100%', height: '100%' }} buttonStyle={{ backgroundColor: 'transparent', width: '100%', height: '100%' }} 
-            titleStyle={{ fontFamily: 'Lato Black', fontSize: 18 }} title="Sign up" onPress={() => navigation.navigate('RegisterView')}/>
+            titleStyle={{ fontFamily: 'Lato Black', fontSize: 18 }} title="Sign up" onPress={() => navigation.navigate('CodeVerificationView')}/>
         </LinearGradient>
       </ScrollView>
     </KeyboardAvoidingView>

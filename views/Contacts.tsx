@@ -48,7 +48,7 @@ const Contacts: React.FC<NavigationContainerProps> = ({ navigation }) => {
         onChange={(event) => setSearch(event.nativeEvent.text)}
       />
       {results.map((user, i) => {
-        const _user = { id: user.user_id, email: user.user_email, name: user.user_name, phone: '' }
+        const _user = { id: user.user_id, email: user.user_email, name: user.user_name, username: user.user_username, status: user.user_status, pictureUrl: user.user_picture_url }
         if(loggedUser.id !== _user.id) {
           return (<ContactContainer key={i} user={_user} status='Available' action={() => { navigation.navigate('ChatView', { user: _user }) }} />)
         }
