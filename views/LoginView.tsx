@@ -63,7 +63,7 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
             width: 100, height: 100, overflow: 'visible', marginTop: 100
           }}/>
         <Input 
-          placeholder='Email'
+          placeholder='Email' keyboardType='email-address'
           leftIcon={<Icon name='email' color='#36C899' size={24} iconStyle={{ right: 10 }} />}
           containerStyle={{ marginTop: 40, width: '80%', backgroundColor: '#FFF', height: 50, justifyContent: 'center', borderRadius: 10, borderWidth: 1, borderColor: '#36C899' }}
           inputContainerStyle={{ borderBottomWidth: 0 }}

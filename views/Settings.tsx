@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { View, Text, Image, TouchableOpacity, AsyncStorage, Animated } from 'react-native'
+import { View, Text, TouchableOpacity, AsyncStorage, Animated, ActivityIndicator } from 'react-native'
 import AppHeader from '../components/AppHeader';
-import { Button } from 'react-native-elements';
+import { Button, Image } from 'react-native-elements';
 import { NavigationContainerProps } from 'react-navigation';
 import { useDispatch, useSelector } from 'react-redux'
 import LoadingView from './LoadingView';
@@ -61,8 +61,10 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
       {loading && <LoadingView />}
       <TouchableOpacity style={{ backgroundColor: 'transparent', marginTop: 3, width: '90%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
       onPress={() => navigation.navigate('Profile')}>
-        <Image source={{ uri: server + 'picture/' + user.pictureUrl }} 
-          style={{ width: 80, height: 80, margin: 20, marginLeft: 10, marginRight: 10, borderRadius: 40 }}/>
+        <Image
+          source={{ uri: server + 'picture/' + user.pictureUrl }} 
+          style={{ width: 80, height: 80, margin: 20, marginLeft: 10, marginRight: 10, borderRadius: 40 }}
+          PlaceholderContent={<ActivityIndicator />} />
         <View style={{ backgroundColor: 'transparent', width: '65%', marginBottom: '4%' }}>
           <Text style={{ fontFamily: 'Lato Bold', padding: 0, fontSize: 22 }} >{user.name}</Text>
           <Text style={{ fontFamily: 'Lato Light', paddingTop: 2, fontSize: 13 }} >{status ? status : 'Available'}</Text>

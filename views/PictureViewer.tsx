@@ -36,7 +36,7 @@ const PictureViewer: React.FC<NavigationContainerProps> = ({ navigation }) => {
   }
 
   const changePicture = async (base64) => {
-    const _uri = user.email + Date.now();
+    const _uri = user.email + Date.now() + '.png';
     console.log(_uri);
     const body = {
       uri: _uri,

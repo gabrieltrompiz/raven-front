@@ -108,7 +108,7 @@ const RegisterView: React.FC<NavigationContainerProps> = ({ navigation, screenPr
         if(!res.cancelled) {
           setImage(res.uri);
           setBase64(res.base64);
-          setUri(_email + Date.now());
+          setUri(_email + Date.now() + '.png');
         }
       }).catch(console.log);
   }

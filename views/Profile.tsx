@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
+import { View, TouchableOpacity, ScrollView, AsyncStorage, ActivityIndicator } from 'react-native';
 import { Image, Button } from 'react-native-elements';
 import { NavigationContainerProps } from 'react-navigation';
 import AppHeader from '../components/AppHeader';
@@ -87,6 +87,7 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
         <Image
           source={{ uri: server + 'picture/' + user.pictureUrl }}
           style={{ width: 180, height: 180, borderRadius: 100, marginTop: 15, marginBottom: 55 }}
+          PlaceholderContent={<ActivityIndicator />}
         />
       </TouchableOpacity>
       <ScrollView>

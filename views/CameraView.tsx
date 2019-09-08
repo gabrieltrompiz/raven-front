@@ -25,7 +25,7 @@ const CameraView: React.FC<NavigationContainerProps> = ({ navigation }) => {
     return () => {
       StatusBar.setHidden(false);
     }
-  })
+  }, []);
 
   const askPermissions = async () => {
     return await Permissions.askAsync(Permissions.CAMERA);
