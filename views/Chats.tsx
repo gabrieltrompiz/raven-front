@@ -9,6 +9,7 @@ import { ChatMessage, User } from '../types';
 import { useSelector, useDispatch, useStore } from 'react-redux'
 import { ADD_MESSAGE, ADDED_TO_GROUP } from '../redux/actionTypes'
 import { groupBy } from 'rxjs/internal/operators/groupBy';
+import { Observable, Subscription } from 'rxjs';
 
 const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
@@ -17,8 +18,8 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const timeline = useSelector(state => state.timeline)
   const user = useSelector(state => state.user)
   const connected = useSelector(state => state.connected)
-  const statu = useSelector(state => state);
   const dispatch = useDispatch()
+  const events: Subscription[] = []
 
   const [search, setSearch] = useState('')
   const [scrolled, setScrolled] = useState(false) // state for controlling header's shadow
@@ -33,23 +34,37 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
   }, [connected])
 
   const _subscribeToEvents = () => {
-    socket.onMessage().subscribe((m: ChatMessage) => {
+    const onMessage = socket.onMessage().subscribe((m: ChatMessage) => {
       m.time = Date.now()
+      console.log(m)
       dispatch({ type: ADD_MESSAGE, payload: { message: m, id: m.to }})
     })
-    socket.onGroupAdd().subscribe((group: any) => {
+    events.push(onMessage)
+    const onGroupAdd = socket.onGroupAdd().subscribe((group: any) => {
       group.creationTime = Date.now()
       dispatch({ type: ADDED_TO_GROUP, payload: { group: group }})
     })
-    socket.onChannelAdd().subscribe((channel: any) => {
+    events.push(onGroupAdd)
+    const onChannelAdd = socket.onChannelAdd().subscribe((channel: any) => {
       channel.creationTime = Date.now()
       dispatch({ type: ADDED_TO_GROUP, payload: { group: channel }})
     })
+    events.push(onChannelAdd)
   }
 
   useEffect(() => {
-    AsyncStorage.setItem('RAVEN-CHATS-' + user.email.toUpperCase(), JSON.stringify(chats))
-    AsyncStorage.setItem('RAVEN-TIMELINE-' + user.email.toUpperCase(), JSON.stringify(timeline))
+    if(!user) {
+      return () => {
+        for(let e of events) {
+          e.unsubscribe()
+        }
+      }
+    }
+  }, [user])
+
+  useEffect(() => {
+    AsyncStorage.setItem('RAVEN-CHATS', JSON.stringify(chats))
+    AsyncStorage.setItem('RAVEN-TIMELINE', JSON.stringify(timeline))
   }, [chats])
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => { // linear functions generate a coefficient from 0 to 1 according to scrolled distance
@@ -76,7 +91,7 @@ const Chats: React.FC<NavigationContainerProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F8F9FB' }}>
-      <AppHeader title='Chats' color='#FFF' shadow={scrolled}/>
+      <AppHeader title='Chats' color='#FFF' shadow={scrolled} logged />
       <ScrollView style={{ flex: 1 }} onScrollEndDrag={(event) => onRelease(event)} scrollEventThrottle={16} onScroll={(event) => onScroll(event)} ref={ref}>
         <View style={{ backgroundColor: '#FFF', height: Dimensions.get('window').height, width: '100%', position: 'absolute', top: -Dimensions.get('window').height, left: 0, right: 0}}></View>
         <SearchBar placeholder="Search"

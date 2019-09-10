@@ -12,6 +12,8 @@ const ContactContainer: React.FC<ContactProps> = ({ user, status, toggle, action
     setToggled(!toggled);
   }
 
+  console.log(server + 'picture/' + user.pictureUrl)
+
   return(
     <View style={{ width: '100%', height: 70, backgroundColor: 'transparent' }}>
       <TouchableOpacity activeOpacity={0.8} onPress={() => typeof action === 'undefined' ? toggleBlock() : action() }

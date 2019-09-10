@@ -13,8 +13,9 @@ import LottieView from 'lottie-react-native';
 
 const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
-  const status = useSelector(store => store.status);
-  const user = useSelector(store => store.user);
+  const status = useSelector(state => state.status);
+  const user = useSelector(state => state.user);
+  const uri = useSelector(state => state.uri)
   const server = require('../config.json').server
   const dark = useSelector(state => state.dark)
   const progress = useState(new Animated.Value(dark ? 0.35 : 0.25))[0]
@@ -30,7 +31,7 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
       if(response.status === 200) {
         setTimeout(async () => {
           setLoading(false)
-          await AsyncStorage.removeItem('RAVEN-USER')
+          await AsyncStorage.multiRemove(['RAVEN-USER', 'RAVEN-CHATS', 'RAVEN-TIMELINE', 'RAVEN-DARK'])
           await SecureStore.deleteItemAsync('RAVEN-PWD')
           navigation.dangerouslyGetParent().dangerouslyGetParent().navigate('LoginView')
           dispatch({ type: DELETE_USER })
@@ -53,7 +54,7 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
     }
   }
 
-  console.log(dark)
+  console.log(user.pictureUrl)
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F8F9FB', alignItems: 'center' }}>
@@ -62,7 +63,7 @@ const Settings: React.FC<NavigationContainerProps> = ({ navigation }) => {
       <TouchableOpacity style={{ backgroundColor: 'transparent', marginTop: 3, width: '90%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
       onPress={() => navigation.navigate('Profile')}>
         <Image
-          source={{ uri: server + 'picture/' + user.pictureUrl }} 
+          source={{ uri: server + 'picture/' + uri }} 
           style={{ width: 80, height: 80, margin: 20, marginLeft: 10, marginRight: 10, borderRadius: 40 }}
           PlaceholderContent={<ActivityIndicator />} />
         <View style={{ backgroundColor: 'transparent', width: '65%', marginBottom: '4%' }}>

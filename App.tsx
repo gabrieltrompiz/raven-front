@@ -80,15 +80,17 @@ const ConsumerApp: React.FC = () => {
     if(_token !== null) { setToken(_token) }
     if(_email !== null) { setEmail(_email) }
     if(_user !== null) { 
-      // await AsyncStorage.removeItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
-      // await AsyncStorage.removeItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
+      // await AsyncStorage.removeItem('RAVEN-CHATS')
+      // await AsyncStorage.removeItem('RAVEN-TIMELINE')
       const _currStatus = await AsyncStorage.getItem('RAVEN-USER-STATUS-' + JSON.parse(_user).email.toUpperCase());
       const _statusList = await AsyncStorage.getItem('RAVEN-USER-STATUS-LIST-' + JSON.parse(_user).email.toUpperCase());
       const _background = await AsyncStorage.getItem('RAVEN-BACKGROUND')
       const _dark = await AsyncStorage.getItem('RAVEN-DARK')
       dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } });
-      const _chats = await AsyncStorage.getItem('RAVEN-CHATS-' + JSON.parse(_user).email.toUpperCase())
-      const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE-' + JSON.parse(_user).email.toUpperCase())
+      const _chats = await AsyncStorage.getItem('RAVEN-CHATS')
+      console.log('chats:')
+      console.log(_chats)
+      const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE')
       dispatch({ type: SET_CHAT_TIMELINE, payload: { chats: _chats ? JSON.parse(_chats) : {}, timeline: _timeline ? JSON.parse(_timeline) : []  } })
       if(_currStatus) { dispatch({ type: SET_STATUS, payload: { status: JSON.parse(_currStatus) } }) }
       if(_statusList) { dispatch({ type: SET_STATUS_LIST, payload: { statusList: JSON.parse(_statusList) } }) }

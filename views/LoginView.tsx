@@ -8,7 +8,7 @@ import * as EmailValidator from 'email-validator';
 import LoadingView from './LoadingView';
 import * as SecureStore from 'expo-secure-store';
 import { useDispatch } from 'react-redux'
-import { SET_USER } from '../redux/actionTypes'
+import { SET_USER, SET_PIC } from '../redux/actionTypes'
 
 const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -31,13 +31,15 @@ const LoginView: React.FC<NavigationContainerProps> = ({ navigation }) => {
       .then(response => response.json())
       .then(async (response) => {
         setLoading(false);
-        console.log(response)
         if(response.status === 200) {     
           const user = response.user
+          await AsyncStorage.removeItem('RAVEN-CHATS')
+          await AsyncStorage.removeItem('RAVEN-TIMELINE')
           await AsyncStorage.setItem('RAVEN-USER', JSON.stringify(user))
           await SecureStore.setItemAsync('RAVEN-PWD', password, { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY })
+          dispatch({ type: SET_USER, payload: { user } })
+          dispatch({ type: SET_PIC, payload: { uri: user.pictureUrl } })
           navigation.navigate('App')
-          dispatch({ type: SET_USER, payload: { user: user } })
         } else {
           setLoading(false)
           setLoginError('Wrong credentials. Email or password incorrect.');

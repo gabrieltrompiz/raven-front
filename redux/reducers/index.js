@@ -1,5 +1,5 @@
 import { SET_USER, DELETE_USER, ADD_MESSAGE, SET_CONNECTED, SET_CHAT_TIMELINE, SEND_MESSAGE, ADDED_TO_GROUP, SET_BACKGROUND,
-   SET_STATUS, SET_STATUS_LIST, SET_DARK } from '../actionTypes'
+   SET_STATUS, SET_STATUS_LIST, SET_DARK, SET_PIC } from '../actionTypes'
 
 const initialState = {
   user: null,
@@ -7,7 +7,8 @@ const initialState = {
   connected: false,
   timeline: [],
   background: '#63BDCF',
-  dark: false
+  dark: false,
+  uri: ''
 }
 
 export default function(state = initialState, action) {
@@ -16,7 +17,8 @@ export default function(state = initialState, action) {
       const { user } = action.payload
       return {
         ...state, 
-        user: user
+        user,
+        uri: user.pictureUrl
       }
     }
 
@@ -31,6 +33,7 @@ export default function(state = initialState, action) {
       const { message, id } = action.payload
       const chats = Object.assign({}, state.chats);
       let timeline = [...state.timeline]
+      console.log(message)
       if(message.type === 1) {
         if(typeof chats[message.user.email] === 'undefined') {
           chats[message.user.email] = {}
@@ -160,6 +163,14 @@ export default function(state = initialState, action) {
       return {
         ...state,
         dark
+      }
+    }
+
+    case SET_PIC: {
+      const { uri } = action.payload;
+      return {
+        ...state,
+        uri
       }
     }
 

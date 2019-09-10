@@ -11,8 +11,9 @@ import LoadingView from './LoadingView';
 import { SET_USER } from '../redux/actionTypes'
 
 const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
-  const user = useSelector(store => store.user);
-  const status = useSelector(store => store.status);
+  const user = useSelector(state => state.user);
+  const status = useSelector(state => state.status);
+  const uri = useSelector(state => state.uri)
   const [modal, setModal] = useState(false);
   const [field, setField] = useState('');
   const [value, setValue] = useState('');
@@ -85,8 +86,8 @@ const Profile: React.FC<NavigationContainerProps> = ({ navigation }) => {
         titleStyle={{ color: '#36C899', fontFamily: 'Lato Bold' }} containerStyle={{ width: 100 }} style={{ width: 100 }} />} />
       <TouchableOpacity onPress={() => navigation.navigate('PictureViewer')}>
         <Image
-          source={{ uri: server + 'picture/' + user.pictureUrl }}
-          style={{ width: 180, height: 180, borderRadius: 100, marginTop: 15, marginBottom: 55 }}
+          source={{ uri: server + 'picture/' + uri }}
+          style={{ width: 180, height: 180, borderRadius: 90, marginTop: 15, marginBottom: 55 }}
           PlaceholderContent={<ActivityIndicator />}
         />
       </TouchableOpacity>
