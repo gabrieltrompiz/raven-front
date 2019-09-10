@@ -33,7 +33,7 @@ const ChatContainer: React.FC<ChatProps> = ({ user, group, messages, navigation 
         </Text>
         <Image 
           source={require('../assets/right-arrow.png')}
-          style={{ width: 20, height: 20, tintColor: '#36C899', position: 'absolute', right: 10, bottom: 5 }}
+          style={{ width: 20, height: 20, tintColor: '#36C899', position: 'absolute', right: 10, top: 10 }}
         />
       </TouchableOpacity>
     </View>

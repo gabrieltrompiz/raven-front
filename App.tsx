@@ -88,8 +88,6 @@ const ConsumerApp: React.FC = () => {
       const _dark = await AsyncStorage.getItem('RAVEN-DARK')
       dispatch({ type: SET_USER, payload: { user: JSON.parse(_user) } });
       const _chats = await AsyncStorage.getItem('RAVEN-CHATS')
-      console.log('chats:')
-      console.log(_chats)
       const _timeline = await AsyncStorage.getItem('RAVEN-TIMELINE')
       dispatch({ type: SET_CHAT_TIMELINE, payload: { chats: _chats ? JSON.parse(_chats) : {}, timeline: _timeline ? JSON.parse(_timeline) : []  } })
       if(_currStatus) { dispatch({ type: SET_STATUS, payload: { status: JSON.parse(_currStatus) } }) }

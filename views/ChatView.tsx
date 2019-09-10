@@ -1,6 +1,6 @@
 import React , { useContext, useState } from 'react'
 import { ChatProps, User, ChatMessage } from '../types';
-import { View, Button, Text, TouchableHighlight, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { View, Button, Text, TouchableOpacity, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { NavigationContainerProps, NavigationScreenProp, NavigationParams } from 'react-navigation';
 import ChatHeader from '../components/ChatHeader';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -54,12 +54,13 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
     console.log(attachment);
     if((input.trim() !== '' || attachment) && connected) {
       socket.sendMessage({ type: user ? 1 : 2, attachment: attachment ? attachment : '', body: input, to: user ? user.id : group.id })
-      dispatch({ type: SEND_MESSAGE, payload: { message: { body: input, type: user ? 1 : 2, attachment: '', user: logged, time: Date.now() }, to: user ? user.email : group.id, user } })
+      dispatch({ type: SEND_MESSAGE, payload: { message: { body: input, type: user ? 1 : 2, attachment: attachment ? attachment : '', user: logged, time: Date.now() }, to: user ? user.email : group.id, user } })
       setInput('')
     }
   }
 
   const selectPicture = async () => {
+    console.log('fuck off')
     ImagePicker.launchImageLibraryAsync(pickerOptions)
       .then(res => {
         if(!res.cancelled) {
@@ -109,10 +110,10 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
       </ScrollView>
       <View style={{ minHeight: 75, width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderTopColor: '#AAAAAA', borderTopWidth: 0.4, justifyContent: 'space-around', 
         paddingBottom: 20, alignItems: 'center', flexDirection: 'row', paddingLeft: 5, paddingRight: 5, maxHeight: 200 }}>
-        <TouchableHighlight style={{ height: 35, width: 35, borderRadius: 17.5, alignItems: 'center', justifyContent: 'center', marginLeft: 5 }}
+        <TouchableOpacity style={{ height: 35, width: 35, borderRadius: 17.5, alignItems: 'center', justifyContent: 'center', marginLeft: 5 }}
           onPress={selectPicture}>
           <Icon name ='camera' color='#4FC77F' type='material-community' size={28} />
-        </TouchableHighlight>
+        </TouchableOpacity>
         <Input 
           containerStyle={{ borderWidth: 0.2, backgroundColor: '#FFFFFF', borderRadius: 20, width: '70%', borderColor: '#AAAAAA', justifyContent: 'center',
           alignItems: 'center', height: 30 }}
@@ -121,9 +122,9 @@ const ChatView: React.FC<NavigationContainerProps> = ({ navigation }) => {
           onChange={(event) => { setInput(event.nativeEvent.text) }}
         />
         <LinearGradient colors={['#4FC77F', '#33CA9B']} style={{ width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginRight: 5 }}>
-          <TouchableHighlight style={{ width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' }} onPress={() => send()}>
+          <TouchableOpacity style={{ width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' }} onPress={() => send()}>
             <Icon name='telegram' color='white' type='material-community' size={21} containerStyle={{ marginTop: 2, marginRight: 2 }} />
-          </TouchableHighlight>
+          </TouchableOpacity>
         </LinearGradient>
       </View>
     </KeyboardAvoidingView>
